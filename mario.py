@@ -1,23 +1,33 @@
 from pico2d import *
 
 class monster_1:
-    def __init__(self):
-        self.x, self.y = 400, 90
+    def __init__(self, x, y):
+        self.x, self.y = x, y
         self.frame = 0
         self.image = load_image('character.png')
         self.move = 0
+        self.turn = 0
+        self.die = 1
+        self.height = 90
+        self.side = 30
+        global jum
     def update(self, range):
         self.frame = (self.frame + 1) % 8
         if self.move < range:
-            self.x += 5
-            self.move += 5
+            self.x += 2
+            self.move += 2
+            self.turn += 2           
         else:
-            self.x -= 5
-            if self .x < range * -1:
+            self.x -= 2
+            self.turn -= 2
+            if self.turn < 0:
                 self.move = 0
 
-    def draw(self,x, y):
-        self.image.draw(self.x, self.y)
+    def draw(self, mario_x, mario_y):
+        if jum == 1 and  mario_y == self.height and self.x - self.side <mario_x < self.x + self.side:
+            self.die = 0
+        if self.die == 1:
+            self.image.draw(self.x, self.y)
 
 
 def handle_events():
@@ -59,13 +69,14 @@ dir = 0
 y = 0
 jump  = 0
 jum = 0
-mush_1 = monster_1()
+die_1 = 0
+mush_1 = monster_1(200, 90)
 
 while running:
     clear_canvas()
     grass.draw(400, 30)
-    mush_1.update(100)
-    mush_1.draw(90,90)
+    mush_1.update(200)
+    mush_1.draw(x , y)
     if jum == 1:
         y -= 10
         character.clip_draw(frame * 100, 100 * right, 100, 100, x, 90 + y)
@@ -81,7 +92,7 @@ while running:
     else:
         character.clip_draw(frame * 100, 100 * right, 90, 90, x, 90)
     update_canvas()
-
+    
     handle_events()
     if right == 3:
         if dir == 1:
@@ -96,7 +107,7 @@ while running:
 
     x += dir * 5
 
-    delay(0.01)
+    delay(0.1)
 
 close_canvas()
 
