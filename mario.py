@@ -24,8 +24,13 @@ class monster_1:
                 self.move = 0
 
     def draw(self, mario_x, mario_y):
+        global mario_die
         if jum == 1 and  mario_y == self.height and self.x - self.side <mario_x < self.x + self.side:
             self.die = 0
+        elif jum == 0 and mario_y < self.height and self.x - self.side <mario_x < self.x + self.side:
+            mario_die = 1
+        elif jum == 1 and  mario_y < self.height - 10 and self.x - self.side <mario_x < self.x + self.side:
+            mario_die = 1
         if self.die == 1:
             self.image.draw(self.x, self.y)
 
@@ -67,9 +72,9 @@ x = 800 // 2
 frame = 0
 dir = 0
 y = 0
-jump  = 0
-jum = 0
-die_1 = 0
+jump  = 0  #점프
+jum = 0  #점프후 내려오기
+mario_die = 0  #주인공 죽음
 mush_1 = monster_1(200, 90)
 
 while running:
@@ -92,7 +97,9 @@ while running:
     else:
         character.clip_draw(frame * 100, 100 * right, 90, 90, x, 90)
     update_canvas()
-    
+    if mario_die == 1:
+        right = 3
+        print(mario_die)
     handle_events()
     if right == 3:
         if dir == 1:
@@ -107,7 +114,7 @@ while running:
 
     x += dir * 5
 
-    delay(0.1)
+    delay(0.05)
 
 close_canvas()
 
