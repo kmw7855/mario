@@ -25,15 +25,26 @@ class monster_1:
 
     def draw(self, mario_x, mario_y):
         global mario_die
-        if jum == 1 and  mario_y == self.height and self.x - self.side <mario_x < self.x + self.side:
+        if jum == 1 and  mario_y == self.height + self.y and self.x -self.side <= mario_x < self.x + self.side:
             self.die = 0
-        elif jum == 0 and mario_y < self.height and self.x - self.side <mario_x < self.x + self.side:
+        elif jum == 0 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
             mario_die = 1
-        elif jum == 1 and  mario_y < self.height - 10 and self.x - self.side <mario_x < self.x + self.side:
+        elif jum == 1 and  mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
             mario_die = 1
         if self.die == 1:
             self.image.draw(self.x, self.y)
 
+
+class item_1:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+        self.image = load_image('item1.png')
+        self.die = 0
+    def draw(self,mario_x, mario_y):
+        if self.y <= mario_y <= self.y + 50 and self.x - 50 <= mario_x <= self.x + 50:
+            self.die = 1
+        if self. die == 0:
+            self.image.draw(self.x, self.y)
 
 def handle_events():
     global running
@@ -71,17 +82,23 @@ running = True
 x = 800 // 2
 frame = 0
 dir = 0
-y = 0
+y = 0   #점프높이
+ground = 90 #땅
+now = y+ground
 jump  = 0  #점프
 jum = 0  #점프후 내려오기
 mario_die = 0  #주인공 죽음
 mush_1 = monster_1(200, 90)
+flower_1 = item_1(700, 90)
+point = 0
 
 while running:
     clear_canvas()
+    now = y+ground
     grass.draw(400, 30)
     mush_1.update(200)
-    mush_1.draw(x , y)
+    mush_1.draw(x , now)
+    flower_1.draw(x, now)
     if jum == 1:
         y -= 10
         character.clip_draw(frame * 100, 100 * right, 100, 100, x, 90 + y)
@@ -98,8 +115,7 @@ while running:
         character.clip_draw(frame * 100, 100 * right, 90, 90, x, 90)
     update_canvas()
     if mario_die == 1:
-        right = 3
-        print(mario_die)
+        point += 1
     handle_events()
     if right == 3:
         if dir == 1:
