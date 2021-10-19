@@ -1,5 +1,24 @@
 from pico2d import *
 
+class monster_1:
+    def __init__(self):
+        self.x, self.y = 400, 90
+        self.frame = 0
+        self.image = load_image('character.png')
+        self.move = 0
+    def update(self, range):
+        self.frame = (self.frame + 1) % 8
+        if self.move < range:
+            self.x += 5
+            self.move += 5
+        else:
+            self.x -= 5
+            if self .x < range * -1:
+                self.move = 0
+
+    def draw(self,x, y):
+        self.image.draw(self.x, self.y)
+
 
 def handle_events():
     global running
@@ -32,7 +51,7 @@ def handle_events():
 open_canvas()
 grass = load_image('grass.png')
 character = load_image('mario_not bg.png')
-right = 0
+right = 3
 running = True
 x = 800 // 2
 frame = 0
@@ -40,10 +59,13 @@ dir = 0
 y = 0
 jump  = 0
 jum = 0
+mush_1 = monster_1()
+
 while running:
     clear_canvas()
     grass.draw(400, 30)
-    
+    mush_1.update(100)
+    mush_1.draw(90,90)
     if jum == 1:
         y -= 10
         character.clip_draw(frame * 100, 100 * right, 100, 100, x, 90 + y)
