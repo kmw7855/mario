@@ -41,10 +41,8 @@ class item_1:
         self.image = load_image('item1.png')
         self.die = 0
     def draw(self,mario_x, mario_y):
-        global state
         if self.y <= mario_y <= self.y + 50 and self.x - 50 <= mario_x <= self.x + 50:
             self.die = 1
-            state = 1
         if self. die == 0:
             self.image.draw(self.x, self.y)
 
@@ -60,7 +58,7 @@ def handle_events():
         elif event.type == SDL_KEYDOWN:
             if event.key == SDLK_RIGHT:
                 dir += 1
-                right = 3
+                right = 0
             elif event.key == SDLK_LEFT:
                 dir -= 1
                 right = 1
@@ -78,10 +76,9 @@ def handle_events():
 
 open_canvas()
 grass = load_image('grass.png')
-character = load_image('mario_not bg.png')
-supermario = load_image('supermario2.png')
-right = 3
-superright = 0
+character = load_image('supermario2.png')
+supermario = load_image('supermario.png')
+right = 0
 state = 0
 running = True
 x = 800 // 2
@@ -118,56 +115,22 @@ while running:
                 jum = 1
                 jump = 0
         else:
-            character.clip_draw(frame * 100, 100 * right, 90, 90, x, 90)
+            character.clip_draw(frame * 100, 100 * right, 100, 100, x, 90)
 
         if mario_die == 1:
             point += 1
 
-        handle_events()
-        if right == 3:
-            if dir == 1:
-                frame = (frame + 1) % 3 + 1
-            else:
-                frame = 0
-        elif right == 1:
-            if dir == -1:
-                frame = (frame + 1) % 3 + 6
-            else:
-                frame = 9
-    elif state == 1:
-        if right == 3:
-            superright = 0
+    handle_events()
+    if right == 1:
+        if dir == -1:
+            frame = (frame + 1) % 3 + 4
         else:
-            superright = 1
-        if jum == 1:
-            y -= 10
-            supermario.clip_draw(frame * 100, 100 * superright, 100, 100, x, 90 + y)
-            if y == 0:
-                jum = 0
-    
-        elif jump == 1:
-            y += 10
-            supermario.clip_draw(frame * 100, 100 * superright, 100, 100, x, 90 + y)
-            if y == 200:
-                jum = 1
-                jump = 0
+            frame = 6
+    elif right == 0:
+        if dir == 1:
+            frame = (frame + 1) % 3 
         else:
-            supermario.clip_draw(frame * 100, 100 * superright, 90, 90, x, 90)
-
-        if mario_die == 1:
-            point += 1
-
-        handle_events()
-        if superright == 1:
-            if dir == -1:
-                frame = (frame + 1) % 3 + 4
-            else:
-                frame = 6
-        elif superright == 0:
-            if dir == 1:
-                frame = (frame + 1) % 3 
-            else:
-                frame = 0
+            frame = 0
     update_canvas()
    
     x += dir * 5
@@ -175,4 +138,3 @@ while running:
     delay(0.05)
 
 close_canvas()
-
