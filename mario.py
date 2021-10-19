@@ -13,10 +13,10 @@ def handle_events():
         elif event.type == SDL_KEYDOWN:
             if event.key == SDLK_RIGHT:
                 dir += 1
-                right = 1
+                right = 3
             elif event.key == SDLK_LEFT:
                 dir -= 1
-                right = 0
+                right = 1
             elif event.key == SDLK_UP:
                 jump = 1 
             elif event.key == SDLK_ESCAPE:
@@ -31,8 +31,8 @@ def handle_events():
 
 open_canvas()
 grass = load_image('grass.png')
-character = load_image('animation_sheet.png')
-right = 1
+character = load_image('mario_not bg.png')
+right = 0
 running = True
 x = 800 // 2
 frame = 0
@@ -57,11 +57,21 @@ while running:
             jum = 1
             jump = 0
     else:
-        character.clip_draw(frame * 100, 100 * right, 100, 100, x, 90)
+        character.clip_draw(frame * 100, 100 * right, 90, 90, x, 90)
     update_canvas()
 
     handle_events()
-    frame = (frame + 1) % 8
+    if right == 3:
+        if dir == 1:
+            frame = (frame + 1) % 3 + 1
+        else:
+            frame = 0
+    elif right == 1:
+        if dir == -1:
+            frame = (frame + 1) % 3 + 6
+        else:
+            frame = 9
+
     x += dir * 5
 
     delay(0.01)
