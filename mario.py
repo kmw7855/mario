@@ -36,12 +36,14 @@ class monster_1:
             elif self.die ==1 and hyper == 0 and jum == 0 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
                 if state == 1:
                     state = 0
+                    hyper = 10
                 else:    
                     mario_die = 1  
                     low_jump = 1       
             elif self.die ==1 and hyper == 0 and jum == 1 and  mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
                 if state == 1:
                     state = 0
+                    hyper = 10
                 else:    
                     mario_die = 1
                     low_jump = 1
@@ -213,7 +215,7 @@ def handle_events():
             
 
 
-open_canvas()
+open_canvas(1600, 1024)
 grass = load_image('grass.png')
 character = load_image('mario_not bg.png')
 supermario = load_image('supermario2.png')
@@ -222,7 +224,7 @@ right = 3
 superright = 0
 state = 0
 running = True
-x = 800 // 2
+x = 1600 // 2
 frame = 0
 dir = 0
 y = 0   #점프높이
@@ -232,11 +234,11 @@ jump  = 0  #점프
 jum = 0  #점프후 내려오기
 mario_die = 0  #주인공 죽음
 point = 0
-mush_1 = monster_1(200, 80)
-flower_1 = item_1(700, 80)
-turtle_1 = monster_2(600,80)
+mush_1 = monster_1(300, 80)
+flower_1 = item_1(1000, 80)
+turtle_1 = monster_2(1200,80)
 Fire = fire()
-Coin = [coin((i+3)*100, 200) for i in range(4)]
+Coin = [coin((i+3)*200, 200) for i in range(4)]
 attack = 0
 attack_x = 0
 attack_y = 0
@@ -245,14 +247,16 @@ stop_attack = 0
 low_jump = 0
 low_jump_y = 0
 hyper = 0
+Delay = 0.01
 
 while running:
     clear_canvas()
     now = y+ground
     grass.draw(400, 30)
+    grass.draw(1200,30)
     Fire.update(stop_attack)
-    mush_1.update(200)
-    turtle_1.update(100)
+    mush_1.update(500)
+    turtle_1.update(300)
     for money in Coin:
         money.draw(x, now)    
     mush_1.draw(x , now)
@@ -266,11 +270,12 @@ while running:
         Fire.shoot(x, now, right)
         attack = 0
     if mario_die == 1:
+        Delay = 0.05
         if low_jump == 1:
             y += 10
             low_jump_y += 10
             diemario.draw(x, 90 + y)
-            if low_jump_y == 30:
+            if low_jump_y == 70:
                 jum = 1
                 low_jump = 0
                 low_jump_y = 0
@@ -365,7 +370,8 @@ while running:
    
     x += dir * 5
 
-    delay(0.05)
+    delay(Delay)
 
 close_canvas()
 
+ 
