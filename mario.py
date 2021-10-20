@@ -4,20 +4,23 @@ class monster_1:
     def __init__(self, x, y):
         self.x, self.y = x, y
         self.frame = 0
-        self.image = load_image('character.png')
+        self.image = load_image('monster1.png')
         self.move = 0
         self.turn = 0
         self.die = 1
-        self.height = 90
+        self.height = 80
         self.side = 30
+        self.right = 1
         global jum
     def update(self, range):
         self.frame = (self.frame + 1) % 8
         if self.move < range:
+            self.right = 1
             self.x += 2
             self.move += 2
             self.turn += 2           
         else:
+            self.right = 0
             self.x -= 2
             self.turn -= 2
             if self.turn < 0:
@@ -25,15 +28,20 @@ class monster_1:
 
     def draw(self, mario_x, mario_y):
         global mario_die
+        global state
         if jum == 1 and  mario_y == self.height + self.y and self.x -self.side <= mario_x < self.x + self.side:
             self.die = 0
-        elif jum == 0 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
+        elif self.die ==1 and jum == 0 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
             mario_die = 1
-        elif jum == 1 and  mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
+            state = 0
+        elif self.die ==1 and jum == 1 and  mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
             mario_die = 1
+            state = 0
         if self.die == 1:
-            self.image.draw(self.x, self.y)
-
+            if self.right == 1:
+                self.image.clip_draw(100, 0, 100, 100, self.x, self.y)
+            else:
+                self.image.clip_draw(0, 0, 100, 100, self.x, self.y)
 
 class item_1:
     def __init__(self, x, y):
@@ -93,7 +101,7 @@ now = y+ground
 jump  = 0  #점프
 jum = 0  #점프후 내려오기
 mario_die = 0  #주인공 죽음
-mush_1 = monster_1(200, 90)
+mush_1 = monster_1(200, 80)
 flower_1 = item_1(700, 90)
 point = 0
 
@@ -172,7 +180,7 @@ while running:
    
     x += dir * 5
 
-    delay(0.05)
+    delay(0.1)
 
 close_canvas()
 
