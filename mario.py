@@ -16,6 +16,51 @@ class monster_1:
         self.frame = (self.frame + 1) % 8
         if self.move < range:
             self.right = 1
+            self.x += 4
+            self.move += 4
+            self.turn += 4           
+        else:
+            self.right = 0
+            self.x -= 4
+            self.turn -= 4
+            if self.turn < 0:
+                self.move = 0
+
+    def draw(self, mario_x, mario_y):
+        global mario_die
+        global state
+        global point 
+        if jum == 1 and  mario_y == self.height + self.y and self.x -self.side <= mario_x < self.x + self.side:
+            self.die = 0
+            point += 3
+        elif self.die ==1 and jum == 0 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
+            mario_die = 1
+            state = 0
+        elif self.die ==1 and jum == 1 and  mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
+            mario_die = 1
+            state = 0
+        if self.die == 1:
+            if self.right == 1:
+                self.image.clip_draw(100, 0, 100, 100, self.x, self.y)
+            else:
+                self.image.clip_draw(0, 0, 100, 100, self.x, self.y)
+
+class monster_2:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+        self.frame = 0
+        self.image = load_image('monster2.png')
+        self.move = 0
+        self.turn = 0
+        self.die = 1
+        self.height = 80
+        self.side = 30
+        self.right = 1
+        global jum
+    def update(self, range):
+        self.frame = (self.frame + 1) % 8
+        if self.move < range:
+            self.right = 1
             self.x += 2
             self.move += 2
             self.turn += 2           
@@ -29,9 +74,8 @@ class monster_1:
     def draw(self, mario_x, mario_y):
         global mario_die
         global state
-        if jum == 1 and  mario_y == self.height + self.y and self.x -self.side <= mario_x < self.x + self.side:
-            self.die = 0
-        elif self.die ==1 and jum == 0 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
+        global point
+        if self.die ==1 and jum == 0 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
             mario_die = 1
             state = 0
         elif self.die ==1 and jum == 1 and  mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
@@ -50,17 +94,49 @@ class item_1:
         self.die = 0
     def draw(self,mario_x, mario_y):
         global state
+        global point
         if self.y <= mario_y <= self.y + 50 and self.x - 50 <= mario_x <= self.x + 50:
             self.die = 1
+            point += 10 
             state = 1
         if self. die == 0:
             self.image.draw(self.x, self.y)
 
+class fire:
+    def __init__(self):
+        self.x, self.y = 0, 0
+        self.image = load_image('fire.png')
+        self.die = 0
+        self.range = 0
+        self.attack = 0
+        self.right = 0
+    def shoot(self, x, y, arrow):
+        self.x, self.y = x, y
+        self.right = arrow
+        self.attack = 1
+    def update(self):
+        if self.attack == 1:
+            if self.right == 1:
+                if self.range < 300:
+                    self.x += 20
+                    self.range += 20
+                else:
+                    self.attack = 0           
+            else:
+                if self.range < 300:
+                    self.x -= 20
+                    self.range += 20
+                else:
+                    self.attack = 0
+    def draw(self):
+        if self.attack == 1:
+            self.image.draw(self.x,self.y)
 def handle_events():
     global running
     global dir
     global jump
     global right
+    global attack
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -74,8 +150,12 @@ def handle_events():
                 right = 1
             elif event.key == SDLK_UP:
                 jump = 1 
+            elif event.key == SDLK_z:
+                if state == 1:
+                    attack = 1
             elif event.key == SDLK_ESCAPE:
                 running = False
+                print(point)
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
                 dir -= 1
@@ -101,17 +181,28 @@ now = y+ground
 jump  = 0  #점프
 jum = 0  #점프후 내려오기
 mario_die = 0  #주인공 죽음
+point = 0
 mush_1 = monster_1(200, 80)
 flower_1 = item_1(700, 90)
-point = 0
+turtle_1 = monster_2(400,80)
+
+attack = 0
 
 while running:
     clear_canvas()
     now = y+ground
     grass.draw(400, 30)
     mush_1.update(200)
+    turtle_1.update(100)
     mush_1.draw(x , now)
     flower_1.draw(x, now)
+    turtle_1.draw(x, now)
+    if attack == 1:
+        Fire = fire()
+        Fire.shoot(x, now,right)
+        attack = 0
+    Fire.draw()
+    Fire.update()
     if state == 0:
         if jum == 1:
             y -= 10
@@ -180,7 +271,7 @@ while running:
    
     x += dir * 5
 
-    delay(0.1)
+    delay(0.01)
 
 close_canvas()
 
