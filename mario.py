@@ -334,11 +334,11 @@ jump  = 0  #점프
 jum = 0  #점프후 내려오기
 mario_die = 0  #주인공 죽음
 point = 0
-mush_1 = monster_1(300, 80)
+mush_1 = monster_1(200, 80)
 flower_1 = item_1(1000, 80)
 star_1 = item_2(1400, 80)
 turtle_1 = monster_2(1200,80)
-ghost_1 = monster_3(500,200)
+ghost_1 = monster_3(100,200)
 Fire = fire()
 Coin = [coin((i+3)*200, 200) for i in range(4)]
 attack = 0
@@ -393,22 +393,34 @@ while running:
                 running = False
     elif state == 0:
         if low_jump == 1:
+            if right == 3:
+                frame = 6
+            else:
+                frame = 3
             y += 10
             low_jump_y += 10
             character.clip_draw(frame * 100, 100 * right, 100, 100, x, 90 + y)
-            if low_jump_y == 30:
+            if low_jump_y == 70:
                 jum = 1
                 low_jump = 0
                 low_jump_y = 0
 
         elif jum == 1:
             y -= 10
+            if right == 3:
+                frame = 6
+            else:
+                frame = 3
             character.clip_draw(frame * 100, 100 * right, 100, 100, x, 90 + y)
             if y == 0:
                 jum = 0
     
         elif jump == 1:
             y += 10
+            if right == 3:
+                frame = 6
+            else:
+                frame = 3
             character.clip_draw(frame * 100, 100 * right, 100, 100, x, 90 + y)
             if y == 200:
                 jum = 1
@@ -432,21 +444,33 @@ while running:
                 frame = 9
     elif state == 1:
         if low_jump == 1:
+            if right == 3:
+                frame = 6
+            else:
+                frame = 3
             y += 10
             low_jump_y += 10
             firemario.clip_draw(frame * 100, 100 * right, 100, 100, x, 90 + y)
-            if low_jump_y == 30:
+            if low_jump_y == 70:
                 jum = 1
                 low_jump = 0
                 low_jump_y = 0
 
         elif jum == 1:
+            if right == 3:
+                frame = 6
+            else:
+                frame = 3
             y -= 10
             firemario.clip_draw(frame * 100, 100 * right, 100, 100, x, 90 + y)
             if y == 0:
                 jum = 0
     
         elif jump == 1:
+            if right == 3:
+                frame = 6
+            else:
+                frame = 3
             y += 10
             firemario.clip_draw(frame * 100, 100 * right, 100, 100, x, 90 + y)
             if y == 200:
@@ -477,20 +501,20 @@ while running:
         if low_jump == 1:
             y += 10
             low_jump_y += 10
-            character.clip_draw(frame * 100, 100 * right, 100, 100, x, 90 + y)
-            if low_jump_y == 30:
+            character.clip_draw(3 * 100, 100 * superright, 100, 100, x, 90 + y)
+            if low_jump_y == 70:
                 jum = 1
                 low_jump = 0
                 low_jump_y = 0
         elif jum == 1:
             y -= 10
-            supermario.clip_draw(frame * 100, 100 * superright, 100, 100, x, 90 + y)
+            supermario.clip_draw(3 * 100, 100 * superright, 100, 100, x, 90 + y)
             if y == 0:
                 jum = 0
     
         elif jump == 1:
             y += 10
-            supermario.clip_draw(frame * 100, 100 * superright, 100, 100, x, 90 + y)
+            supermario.clip_draw(3 * 100, 100 * superright, 100, 100, x, 90 + y)
             if y == 200:
                 jum = 1
                 jump = 0
