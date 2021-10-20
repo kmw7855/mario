@@ -314,8 +314,9 @@ def handle_events():
 
 
 open_canvas(1600, 1024)
-grass = load_image('grass.png')
-character = load_image('mario_not bg.png')
+#grass = load_image('grass.png')
+sky = load_image('cloud.jpg')
+character = load_image('mario.png')
 supermario = load_image('supermario2.png')
 diemario = load_image('death.png')
 firemario = load_image('supermario3.png')
@@ -353,8 +354,9 @@ Delay = 0.01
 while running:
     clear_canvas()
     now = y+ground
-    grass.draw(400, 30)
-    grass.draw(1200,30)
+    #grass.draw(400, 30)
+    #grass.draw(1200,30)
+    sky.draw(800,512)
     ghost_1.update(200,x,now,right)
     Fire.update(stop_attack)
     mush_1.update(500)
