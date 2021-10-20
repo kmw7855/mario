@@ -27,20 +27,28 @@ class monster_1:
                 self.move = 0
 
     def draw(self, mario_x, mario_y):
-        global mario_die, state, point, stop_attack
-        if jum == 1 and  mario_y == self.height + self.y and self.x -self.side <= mario_x < self.x + self.side:
-            self.die = 0
-            point += 3
-        elif self.die ==1 and jum == 0 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
-            mario_die = 1
-            state = 0
-        elif self.die ==1 and jum == 1 and  mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
-            mario_die = 1
-            state = 0
-        elif attack_state == 1 and self.y <attack_y < self.height + self.y and self.x -self.side <attack_x < self.side + self.x:
-            self.die = 0
-            point += 3
-            stop_attack = 1
+        global mario_die, state, point, stop_attack, low_jump, hyper
+        if mario_die == 0:
+            if self.die == 1 and jum == 1 and  mario_y == self.height + self.y and self.x -self.side <= mario_x < self.x + self.side:
+                self.die = 0
+                point += 3
+                low_jump = 1
+            elif self.die ==1 and hyper == 0 and jum == 0 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
+                if state == 1:
+                    state = 0
+                else:    
+                    mario_die = 1  
+                    low_jump = 1       
+            elif self.die ==1 and hyper == 0 and jum == 1 and  mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
+                if state == 1:
+                    state = 0
+                else:    
+                    mario_die = 1
+                    low_jump = 1
+            elif attack_state == 1 and self.y <attack_y < self.height + self.y and self.x -self.side <attack_x < self.side + self.x:
+                self.die = 0
+                point += 3
+                stop_attack = 1
         if self.die == 1:
             if self.right == 1:
                 self.image.clip_draw(100, 0, 100, 100, self.x, self.y)
@@ -74,17 +82,25 @@ class monster_2:
                 self.move = 0
 
     def draw(self, mario_x, mario_y):
-        global mario_die, state, point, stop_attack
-        if self.die ==1 and jum == 0 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
-            mario_die = 1
-            state = 0
-        elif self.die ==1 and jum == 1 and  mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
-            mario_die = 1
-            state = 0
-        elif attack_state == 1 and self.y <attack_y < self.height + self.y and self.x -self.side <attack_x < self.side + self.x:
-            self.die = 0
-            point += 3
-            stop_attack = 1
+        global mario_die, state, point, stop_attack, low_jump, hyper
+        if mario_die == 0:
+            if self.die ==1 and hyper == 0 and jum == 0 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
+                if state == 1:
+                    state = 0
+                    hyper = 10
+                else:    
+                    mario_die = 1  
+                    low_jump = 1
+            elif self.die ==1 and jum == 1 and hyper == 0 and mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
+                if state == 1:
+                    state = 0
+                else:    
+                    mario_die = 1  
+                    low_jump = 1
+            elif attack_state == 1 and hyper == 0 and self.y <attack_y < self.height + self.y and self.x -self.side <attack_x < self.side + self.x:
+                self.die = 0
+                point += 3
+                stop_attack = 1
         if self.die == 1:
             if self.right == 1:
                 self.image.clip_draw(100, 0, 100, 100, self.x, self.y)
@@ -99,7 +115,7 @@ class item_1:
     def draw(self,mario_x, mario_y):
         global state
         global point
-        if self.y <= mario_y <= self.y + 50 and self.x - 50 <= mario_x <= self.x + 50:
+        if self.die == 0 and self.y <= mario_y <= self.y + 50 and self.x - 50 <= mario_x <= self.x + 50:
             self.die = 1
             point += 10 
             state = 1
@@ -114,7 +130,7 @@ class coin:
     def draw(self,mario_x, mario_y):
         global state
         global point
-        if self.y <= mario_y <= self.y + 50 and self.x - 50 <= mario_x <= self.x + 50:
+        if self.die == 0 and self.y <= mario_y <= self.y + 50 and self.x - 50 <= mario_x <= self.x + 50:
             self.die = 1
             point += 2 
         if self. die == 0:
@@ -170,7 +186,7 @@ def handle_events():
     for event in events:
         if event.type == SDL_QUIT:
             running = False
-        elif event.type == SDL_KEYDOWN:
+        elif event.type == SDL_KEYDOWN and mario_die == 0:
             if event.key == SDLK_RIGHT:
                 dir += 1
                 right = 3
@@ -185,6 +201,10 @@ def handle_events():
             elif event.key == SDLK_ESCAPE:
                 running = False
                 print(point)
+        elif event.type == SDL_KEYDOWN and mario_die == 1:
+            if event.key == SDLK_ESCAPE:
+                running = False
+                print(point)        
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
                 dir -= 1
@@ -197,6 +217,7 @@ open_canvas()
 grass = load_image('grass.png')
 character = load_image('mario_not bg.png')
 supermario = load_image('supermario2.png')
+diemario = load_image('death.png')
 right = 3
 superright = 0
 state = 0
@@ -212,8 +233,8 @@ jum = 0  #점프후 내려오기
 mario_die = 0  #주인공 죽음
 point = 0
 mush_1 = monster_1(200, 80)
-flower_1 = item_1(700, 90)
-turtle_1 = monster_2(400,80)
+flower_1 = item_1(700, 80)
+turtle_1 = monster_2(600,80)
 Fire = fire()
 Coin = [coin((i+3)*100, 200) for i in range(4)]
 attack = 0
@@ -221,6 +242,9 @@ attack_x = 0
 attack_y = 0
 attack_state = 0
 stop_attack = 0
+low_jump = 0
+low_jump_y = 0
+hyper = 0
 
 while running:
     clear_canvas()
@@ -235,12 +259,38 @@ while running:
     flower_1.draw(x, now)
     turtle_1.draw(x, now)
     Fire.draw()
+    if hyper > 0:
+        hyper -= 1
     if attack == 1:
         stop_attack = 0
         Fire.shoot(x, now, right)
         attack = 0
-    if state == 0:
-        if jum == 1:
+    if mario_die == 1:
+        if low_jump == 1:
+            y += 10
+            low_jump_y += 10
+            diemario.draw(x, 90 + y)
+            if low_jump_y == 30:
+                jum = 1
+                low_jump = 0
+                low_jump_y = 0
+        elif jum == 1:
+            y -= 10
+            diemario.draw(x, 90 + y)
+            if y <= -90:
+                jum = 0
+                running = False
+    elif state == 0:
+        if low_jump == 1:
+            y += 10
+            low_jump_y += 10
+            character.clip_draw(frame * 100, 100 * right, 100, 100, x, 90 + y)
+            if low_jump_y == 30:
+                jum = 1
+                low_jump = 0
+                low_jump_y = 0
+
+        elif jum == 1:
             y -= 10
             character.clip_draw(frame * 100, 100 * right, 100, 100, x, 90 + y)
             if y == 0:
@@ -274,7 +324,15 @@ while running:
             superright = 0
         else:
             superright = 1
-        if jum == 1:
+        if low_jump == 1:
+            y += 10
+            low_jump_y += 10
+            character.clip_draw(frame * 100, 100 * right, 100, 100, x, 90 + y)
+            if low_jump_y == 30:
+                jum = 1
+                low_jump = 0
+                low_jump_y = 0
+        elif jum == 1:
             y -= 10
             supermario.clip_draw(frame * 100, 100 * superright, 100, 100, x, 90 + y)
             if y == 0:
