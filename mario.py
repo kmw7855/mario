@@ -3,7 +3,6 @@ from pico2d import *
 class monster_1:
     def __init__(self, x, y):
         self.x, self.y = x, y
-        self.frame = 0
         self.image = load_image('monster1.png')
         self.move = 0
         self.turn = 0
@@ -13,7 +12,6 @@ class monster_1:
         self.right = 1
         global jum
     def update(self, range):
-        self.frame = (self.frame + 1) % 8
         if self.move < range:
             self.right = 1
             self.x += 4
@@ -36,14 +34,14 @@ class monster_1:
             elif self.die ==1 and hyper == 0 and jum == 0 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
                 if state == 1:
                     state = 0
-                    hyper = 10
+                    hyper = 30
                 else:    
                     mario_die = 1  
                     low_jump = 1       
             elif self.die ==1 and hyper == 0 and jum == 1 and  mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
                 if state == 1:
                     state = 0
-                    hyper = 10
+                    hyper = 30
                 else:    
                     mario_die = 1
                     low_jump = 1
@@ -60,7 +58,6 @@ class monster_1:
 class monster_2:
     def __init__(self, x, y):
         self.x, self.y = x, y
-        self.frame = 0
         self.image = load_image('monster2.png')
         self.move = 0
         self.turn = 0
@@ -70,7 +67,6 @@ class monster_2:
         self.right = 1
         global jum
     def update(self, range):
-        self.frame = (self.frame + 1) % 8
         if self.move < range:
             self.right = 1
             self.x += 2
@@ -89,13 +85,14 @@ class monster_2:
             if self.die ==1 and hyper == 0 and jum == 0 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
                 if state == 1:
                     state = 0
-                    hyper = 10
+                    hyper = 30
                 else:    
                     mario_die = 1  
                     low_jump = 1
             elif self.die ==1 and jum == 1 and hyper == 0 and mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
                 if state == 1:
                     state = 0
+                    hyper = 30
                 else:    
                     mario_die = 1  
                     low_jump = 1
@@ -108,6 +105,81 @@ class monster_2:
                 self.image.clip_draw(100, 0, 100, 100, self.x, self.y)
             else:
                 self.image.clip_draw(0, 0, 100, 100, self.x, self.y)
+
+class monster_3:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+        self.image = load_image('ghost.png')
+        self.move = 0
+        self.turn = 0
+        self.die = 1
+        self.height = 50
+        self.side = 30
+        self.right = 1
+        self.mario = 0
+        global jum
+    def update(self, range,mario_x, mario_y, arrow):
+        if arrow == 3:
+            self.mario = 1
+        elif arrow == 1:
+            self.mario = 0
+        if -300 < mario_x - self.x < 300 or -300 < mario_x - self.x < 300:
+            if self.x < mario_x:
+                self.right = 1
+                if self.right == self.mario:
+                    self.x += 3
+                else:
+                   pass 
+            else:
+                self.right = -1
+                if self.right != self.mario:
+                    self.x -= 3
+                else:
+                   pass 
+            if self.y < mario_y:
+                if self.right == self.mario:
+                    self.y += 2
+                else:
+                   pass 
+            else:
+                if self.right == self.mario:
+                    self.y -= 2
+                else:
+                   pass 
+        elif self.move < range:
+            self.right = 1
+            self.x += 1.5
+            self.move += 1.5
+            self.turn += 2           
+        else:
+            self.right = 0
+            self.x -= 1.5
+            self.turn -= 1.5
+            if self.turn < 0:
+                self.move = 0
+
+    def draw(self, mario_x, mario_y):
+        global mario_die, state, point, stop_attack, low_jump, hyper
+        if mario_die == 0:
+            if self.die ==1 and hyper == 0 and jum == 0 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
+                if state == 1:
+                    state = 0
+                    hyper = 30
+                else:    
+                    mario_die = 1  
+                    low_jump = 1
+            elif self.die ==1 and jum == 1 and hyper == 0 and mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
+                if state == 1:
+                    state = 0
+                    hyper = 30
+                else:    
+                    mario_die = 1  
+                    low_jump = 1
+        if self.die == 1:
+            if self.right == 1:
+                self.image.clip_draw(50, 0, 50, 50, self.x, self.y)
+            else:
+                self.image.clip_draw(0, 0, 50, 50, self.x, self.y)
 
 class item_1:
     def __init__(self, x, y):
@@ -237,6 +309,7 @@ point = 0
 mush_1 = monster_1(300, 80)
 flower_1 = item_1(1000, 80)
 turtle_1 = monster_2(1200,80)
+ghost_1 = monster_3(500,200)
 Fire = fire()
 Coin = [coin((i+3)*200, 200) for i in range(4)]
 attack = 0
@@ -254,6 +327,7 @@ while running:
     now = y+ground
     grass.draw(400, 30)
     grass.draw(1200,30)
+    ghost_1.update(200,x,now,right)
     Fire.update(stop_attack)
     mush_1.update(500)
     turtle_1.update(300)
@@ -262,6 +336,7 @@ while running:
     mush_1.draw(x , now)
     flower_1.draw(x, now)
     turtle_1.draw(x, now)
+    ghost_1.draw(x,now)
     Fire.draw()
     if hyper > 0:
         hyper -= 1
