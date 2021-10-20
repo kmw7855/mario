@@ -27,9 +27,7 @@ class monster_1:
                 self.move = 0
 
     def draw(self, mario_x, mario_y):
-        global mario_die
-        global state
-        global point 
+        global mario_die, state, point, stop_attack
         if jum == 1 and  mario_y == self.height + self.y and self.x -self.side <= mario_x < self.x + self.side:
             self.die = 0
             point += 3
@@ -39,6 +37,10 @@ class monster_1:
         elif self.die ==1 and jum == 1 and  mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
             mario_die = 1
             state = 0
+        elif attack_state == 1 and self.y <attack_y < self.height + self.y and self.x -self.side <attack_x < self.side + self.x:
+            self.die = 0
+            point += 3
+            stop_attack = 1
         if self.die == 1:
             if self.right == 1:
                 self.image.clip_draw(100, 0, 100, 100, self.x, self.y)
@@ -72,15 +74,17 @@ class monster_2:
                 self.move = 0
 
     def draw(self, mario_x, mario_y):
-        global mario_die
-        global state
-        global point
+        global mario_die, state, point, stop_attack
         if self.die ==1 and jum == 0 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
             mario_die = 1
             state = 0
         elif self.die ==1 and jum == 1 and  mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
             mario_die = 1
             state = 0
+        elif attack_state == 1 and self.y <attack_y < self.height + self.y and self.x -self.side <attack_x < self.side + self.x:
+            self.die = 0
+            point += 3
+            stop_attack = 1
         if self.die == 1:
             if self.right == 1:
                 self.image.clip_draw(100, 0, 100, 100, self.x, self.y)
@@ -102,6 +106,21 @@ class item_1:
         if self. die == 0:
             self.image.draw(self.x, self.y)
 
+class coin:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+        self.image = load_image('coin.png')
+        self.die = 0
+    def draw(self,mario_x, mario_y):
+        global state
+        global point
+        if self.y <= mario_y <= self.y + 50 and self.x - 50 <= mario_x <= self.x + 50:
+            self.die = 1
+            point += 2 
+        if self. die == 0:
+            self.image.draw(self.x, self.y)
+
+
 class fire:
     def __init__(self):
         self.x, self.y = 0, 0
@@ -113,10 +132,13 @@ class fire:
     def shoot(self, x, y, arrow):
         self.x, self.y = x, y
         self.right = arrow
+        self.range = 0
         self.attack = 1
-    def update(self):
+    def update(self, stop_attack):
         if self.attack == 1:
-            if self.right == 1:
+            if stop_attack == 1:
+                self.range = 300
+            if self.right == 3:
                 if self.range < 300:
                     self.x += 20
                     self.range += 20
@@ -128,9 +150,16 @@ class fire:
                     self.range += 20
                 else:
                     self.attack = 0
+            
     def draw(self):
+        global attack_x, attack_y, attack_state
         if self.attack == 1:
             self.image.draw(self.x,self.y)
+            attack_x,attack_y, attack_state = self.x, self.y, 1
+        else:
+            attack_state = 0
+
+
 def handle_events():
     global running
     global dir
@@ -185,24 +214,31 @@ point = 0
 mush_1 = monster_1(200, 80)
 flower_1 = item_1(700, 90)
 turtle_1 = monster_2(400,80)
-
+Fire = fire()
+Coin = [coin((i+3)*100, 200) for i in range(4)]
 attack = 0
+attack_x = 0
+attack_y = 0
+attack_state = 0
+stop_attack = 0
 
 while running:
     clear_canvas()
     now = y+ground
     grass.draw(400, 30)
+    Fire.update(stop_attack)
     mush_1.update(200)
     turtle_1.update(100)
+    for money in Coin:
+        money.draw(x, now)    
     mush_1.draw(x , now)
     flower_1.draw(x, now)
     turtle_1.draw(x, now)
-    if attack == 1:
-        Fire = fire()
-        Fire.shoot(x, now,right)
-        attack = 0
     Fire.draw()
-    Fire.update()
+    if attack == 1:
+        stop_attack = 0
+        Fire.shoot(x, now, right)
+        attack = 0
     if state == 0:
         if jum == 1:
             y -= 10
@@ -271,7 +307,7 @@ while running:
    
     x += dir * 5
 
-    delay(0.01)
+    delay(0.05)
 
 close_canvas()
 
