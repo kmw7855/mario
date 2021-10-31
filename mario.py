@@ -198,7 +198,7 @@ class item_1:
     def draw(self,mario_x, mario_y):
         global state
         global point
-        if self.die == 0 and self.y <= mario_y <= self.y + 50 and self.x - 50 <= mario_x <= self.x + 50:
+        if self.die == 0 and self.y <= mario_y <= self.y + 50 and self.x - 30 <= mario_x <= self.x + 30:
             self.die = 1
             point += 10 
             state = 1
@@ -236,7 +236,8 @@ class coin:
         if self. die == 0:
             self.image.draw(self.x, self.y)
 
-
+class pad:
+    pass
 class fire:
     def __init__(self):
         self.x, self.y = 0, 0
