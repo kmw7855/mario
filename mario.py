@@ -54,9 +54,9 @@ class monster_1:
                 point += 3
         if self.die == 1:
             if self.right == 1:
-                self.image.clip_draw(100, 0, 100, 100, self.x, self.y)
+                self.image.clip_draw(75, 0, 75, 75, self.x, self.y)
             else:
-                self.image.clip_draw(0, 0, 100, 100, self.x, self.y)
+                self.image.clip_draw(0, 0, 75, 75, self.x, self.y)
 
 class monster_2:
     def __init__(self, x, y):
@@ -111,9 +111,9 @@ class monster_2:
                 point += 3
         if self.die == 1:
             if self.right == 1:
-                self.image.clip_draw(100, 0, 100, 100, self.x, self.y)
+                self.image.clip_draw(75, 0, 75, 75, self.x, self.y)
             else:
-                self.image.clip_draw(0, 0, 100, 100, self.x, self.y)
+                self.image.clip_draw(0, 0, 75, 75, self.x, self.y)
 
 class monster_3:
     def __init__(self, x, y):
@@ -186,9 +186,9 @@ class monster_3:
                     low_jump = 1
         if self.die == 1:
             if self.right == 1:
-                self.image.clip_draw(50, 0, 50, 50, self.x, self.y)
+                self.image.clip_draw(38, 0, 38, 38, self.x, self.y)
             else:
-                self.image.clip_draw(0, 0, 50, 50, self.x, self.y)
+                self.image.clip_draw(0, 0, 38, 38, self.x, self.y)
 
 class item_1:
     def __init__(self, x, y):
