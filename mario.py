@@ -399,7 +399,7 @@ while running:
                 frame = 3
             y += 10
             low_jump_y += 10
-            character.clip_draw(frame * 50, 50 * right, 50, 50, x, ground + y)
+            character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
             if low_jump_y == 70:
                 jum = 1
                 low_jump = 0
@@ -411,7 +411,7 @@ while running:
                 frame = 6
             else:
                 frame = 3
-            character.clip_draw(frame * 50, 50 * right, 50, 50, x, ground + y)
+            character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
             if y == 0:
                 jum = 0
     
@@ -421,12 +421,12 @@ while running:
                 frame = 6
             else:
                 frame = 3
-            character.clip_draw(frame * 50, 50 * right, 50, 50, x, ground + y)
+            character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
             if y == 200:
                 jum = 1
                 jump = 0
         else:
-            character.clip_draw(frame * 50, 50 * right, 50, 50, x, ground)
+            character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground)
 
         if mario_die == 1:
             point += 1
@@ -450,7 +450,7 @@ while running:
                 frame = 3
             y += 10
             low_jump_y += 10
-            firemario.clip_draw(frame * 50, 50 * right, 50, 50, x, ground + y)
+            firemario.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
             if low_jump_y == 70:
                 jum = 1
                 low_jump = 0
@@ -462,7 +462,7 @@ while running:
             else:
                 frame = 3
             y -= 10
-            firemario.clip_draw(frame * 50, 50 * right, 50, 50, x, ground + y)
+            firemario.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
             if y == 0:
                 jum = 0
     
@@ -472,12 +472,12 @@ while running:
             else:
                 frame = 3
             y += 10
-            firemario.clip_draw(frame * 50, 50 * right, 50, 50, x, ground + y)
+            firemario.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
             if y == 200:
                 jum = 1
                 jump = 0
         else:
-            firemario.clip_draw(frame * 50, 50 * right, 50, 50, x, ground)
+            firemario.clip_draw(frame * 75, 75 * right, 75, 75, x, ground)
 
         if mario_die == 1:
             point += 1
@@ -501,25 +501,25 @@ while running:
         if low_jump == 1:
             y += 10
             low_jump_y += 10
-            character.clip_draw(3 * 50, 50 * superright, 50, 50, x, ground + y)
+            character.clip_draw(3 * 75, 75 * superright, 75, 75, x, ground + y -5)
             if low_jump_y == 70:
                 jum = 1
                 low_jump = 0
                 low_jump_y = 0
         elif jum == 1:
             y -= 10
-            supermario.clip_draw(3 * 50, 50 * superright, 50, 50, x, ground + y)
+            supermario.clip_draw(3 * 75, 75 * superright, 75, 75, x, ground + y-5)
             if y == 0:
                 jum = 0
     
         elif jump == 1:
             y += 10
-            supermario.clip_draw(3 * 50, 50 * superright, 50, 50, x, ground + y)
+            supermario.clip_draw(3 * 75, 75 * superright, 75, 75, x, ground + y-5)
             if y == 200:
                 jum = 1
                 jump = 0
         else:
-            supermario.clip_draw(frame * 50, 50 * superright, 50, 50, x, ground)
+            supermario.clip_draw(frame * 75, 75 * superright, 75, 75, x, ground-5)
         if hyper == 0:
             state = 0
 
