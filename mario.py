@@ -7,20 +7,20 @@ class monster_1:
         self.move = 0
         self.turn = 0
         self.die = 1
-        self.height = 80
+        self.height = 60
         self.side = 30
         self.right = 1
         global jum
     def update(self, range):
         if self.move < range:
             self.right = 1
-            self.x += 4
-            self.move += 4
-            self.turn += 4           
+            self.x += 3
+            self.move += 3
+            self.turn += 3           
         else:
             self.right = 0
-            self.x -= 4
-            self.turn -= 4
+            self.x -= 3
+            self.turn -= 3
             if self.turn < 0:
                 self.move = 0
 
