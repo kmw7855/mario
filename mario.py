@@ -34,14 +34,14 @@ class monster_1:
             elif self.die ==1 and hyper == 0 and jum == 0 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
                 if state == 1:
                     state = 0
-                    hyper = 30
+                    hyper = 50
                 else:    
                     mario_die = 1  
                     low_jump = 1       
             elif self.die ==1 and hyper == 0 and jum == 1 and mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
                 if state == 1:
                     state = 0
-                    hyper = 30
+                    hyper = 50
                 else:    
                     mario_die = 1
                     low_jump = 1
@@ -89,14 +89,14 @@ class monster_2:
             if self.die ==1 and hyper == 0 and jum == 0 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
                 if state == 1:
                     state = 0
-                    hyper = 30
+                    hyper = 50
                 else:    
                     mario_die = 1  
                     low_jump = 1
             elif self.die ==1 and jum == 1 and hyper == 0 and mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
                 if state == 1:
                     state = 0
-                    hyper = 30
+                    hyper = 50
                 else:    
                     mario_die = 1  
                     low_jump = 1
@@ -173,14 +173,14 @@ class monster_3:
             if self.die ==1 and hyper == 0 and jum == 0 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
                 if state == 1:
                     state = 0
-                    hyper = 30
+                    hyper = 50
                 else:    
                     mario_die = 1  
                     low_jump = 1
             elif self.die ==1 and jum == 1 and hyper == 0 and mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
                 if state == 1:
                     state = 0
-                    hyper = 30
+                    hyper = 50
                 else:    
                     mario_die = 1  
                     low_jump = 1
@@ -286,7 +286,7 @@ def handle_events():
     for event in events:
         if event.type == SDL_QUIT:
             running = False
-        elif event.type == SDL_KEYDOWN and mario_die == 0:
+        elif event.type == SDL_KEYDOWN and mario_die == 0 and can_move == 1:
             if event.key == SDLK_RIGHT:
                 dir += 1
                 right = 3
@@ -323,6 +323,8 @@ firemario = load_image('supermario3.png')
 right = 3
 superright = 0
 state = 0
+before_state = 0
+can_move = 1
 running = True
 x = 1600 // 2
 frame = 0
@@ -375,6 +377,10 @@ while running:
         stop_attack = 0
         Fire.shoot(x, now, right)
         attack = 0
+    if before_state != state:
+        can_move = 0
+        if before_state == 1 and state == 0:
+            pass
     if mario_die == 1:
         Delay = 0.05
         if low_jump == 1:
@@ -397,13 +403,14 @@ while running:
                 frame = 6
             else:
                 frame = 3
-            y += 10
-            low_jump_y += 10
-            character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
-            if low_jump_y == 70:
-                jum = 1
-                low_jump = 0
-                low_jump_y = 0
+            if can_move == 1:
+                y += 10
+                low_jump_y += 10
+                character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
+                if low_jump_y == 70:
+                    jum = 1
+                    low_jump = 0
+                    low_jump_y = 0
 
         elif jum == 1:
             y -= 10
@@ -411,9 +418,10 @@ while running:
                 frame = 6
             else:
                 frame = 3
-            character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
-            if y == 0:
-                jum = 0
+            if can_move == 1:
+                character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
+                if y == 0:
+                    jum = 0
     
         elif jump == 1:
             y += 10
@@ -421,10 +429,11 @@ while running:
                 frame = 6
             else:
                 frame = 3
-            character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
-            if y == 200:
-                jum = 1
-                jump = 0
+            if can_move == 1:
+                character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
+                if y == 200:
+                    jum = 1
+                    jump = 0
         else:
             character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground)
 
@@ -448,34 +457,37 @@ while running:
                 frame = 6
             else:
                 frame = 3
-            y += 10
-            low_jump_y += 10
-            firemario.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
-            if low_jump_y == 70:
-                jum = 1
-                low_jump = 0
-                low_jump_y = 0
+            if can_move == 1:
+                y += 10
+                low_jump_y += 10
+                firemario.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
+                if low_jump_y == 70:
+                    jum = 1
+                    low_jump = 0
+                    low_jump_y = 0
 
         elif jum == 1:
             if right == 3:
                 frame = 6
             else:
                 frame = 3
-            y -= 10
-            firemario.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
-            if y == 0:
-                jum = 0
+            if can_move == 1:
+                y -= 10
+                firemario.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
+                if y == 0:
+                    jum = 0
     
         elif jump == 1:
             if right == 3:
                 frame = 6
             else:
                 frame = 3
-            y += 10
-            firemario.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
-            if y == 200:
-                jum = 1
-                jump = 0
+            if can_move == 1:
+                y += 10
+                firemario.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
+                if y == 200:
+                    jum = 1
+                    jump = 0
         else:
             firemario.clip_draw(frame * 75, 75 * right, 75, 75, x, ground)
 
@@ -499,25 +511,28 @@ while running:
         else:
             superright = 1
         if low_jump == 1:
-            y += 10
-            low_jump_y += 10
-            character.clip_draw(3 * 75, 75 * superright, 75, 75, x, ground + y -5)
-            if low_jump_y == 70:
-                jum = 1
-                low_jump = 0
-                low_jump_y = 0
+            if can_move == 1:
+                y += 10
+                low_jump_y += 10
+                character.clip_draw(3 * 75, 75 * superright, 75, 75, x, ground + y -5)
+                if low_jump_y == 70:
+                    jum = 1
+                    low_jump = 0
+                    low_jump_y = 0
         elif jum == 1:
-            y -= 10
-            supermario.clip_draw(3 * 75, 75 * superright, 75, 75, x, ground + y-5)
-            if y == 0:
-                jum = 0
+            if can_move == 1:
+                y -= 10
+                supermario.clip_draw(3 * 75, 75 * superright, 75, 75, x, ground + y-5)
+                if y == 0:
+                    jum = 0
     
         elif jump == 1:
-            y += 10
-            supermario.clip_draw(3 * 75, 75 * superright, 75, 75, x, ground + y-5)
-            if y == 200:
-                jum = 1
-                jump = 0
+            if can_move == 1:
+                y += 10
+                supermario.clip_draw(3 * 75, 75 * superright, 75, 75, x, ground + y-5)
+                if y == 200:
+                    jum = 1
+                    jump = 0
         else:
             supermario.clip_draw(frame * 75, 75 * superright, 75, 75, x, ground-5)
         if hyper == 0:
@@ -539,7 +554,7 @@ while running:
     update_canvas()
    
     x += dir * 5
-
+    before_State = state
     delay(Delay)
 
 close_canvas()
