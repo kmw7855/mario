@@ -352,6 +352,7 @@ low_jump = 0
 low_jump_y = 0
 hyper = 0
 Delay = 0.01
+change = 0
 
 while running:
     clear_canvas()
@@ -377,10 +378,25 @@ while running:
         stop_attack = 0
         Fire.shoot(x, now, right)
         attack = 0
-    if before_state != state:
-        can_move = 0
-        if before_state == 1 and state == 0:
-            pass
+    
+    """if before_state != state:
+       change = 1
+       can_move = 0
+       Delay = 0.03
+    if change >= 5:
+        can_move = 1
+        change = 0
+        Delay = 0.01
+
+    elif change != 0:        
+        if (before_state == 1 and state == 0) or (before_state == 0 and state == 1):
+            if change % 2 == 1:
+                character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)                     
+            else:
+                firemario.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
+        change += 1"""
+
+       
     if mario_die == 1:
         Delay = 0.05
         if low_jump == 1:
@@ -552,8 +568,8 @@ while running:
             else:
                 frame = 0
     update_canvas()
-   
-    x += dir * 5
+    if can_move == 1:
+        x += dir * 5
     before_State = state
     delay(Delay)
 
