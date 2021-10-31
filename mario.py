@@ -237,7 +237,16 @@ class coin:
             self.image.draw(self.x, self.y)
 
 class pad:
-    pass
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+        self.jump = 0
+        self.image = load_image('pad.png')
+    def draw(self,mario_x, mario_y):
+        self.image.draw(self.x, self.y)
+        if self.y + 40 <= mario_y <= self.y + 50 and self.x - 30 <= mario_x <= self.x + 30:
+            self.jump = 1
+            
+
 class fire:
     def __init__(self):
         self.x, self.y = 0, 0
@@ -342,6 +351,7 @@ flower_1 = item_1(1000, 80)
 star_1 = item_2(1400, 80)
 turtle_1 = monster_2(1200,80)
 ghost_1 = monster_3(100,200)
+pad_1 = pad(300,80)
 Fire = fire()
 Coin = [coin((i+3)*200, 200) for i in range(4)]
 attack = 0
@@ -372,6 +382,7 @@ while running:
     star_1.draw(x,now)
     turtle_1.draw(x, now)
     ghost_1.draw(x,now)
+    pad_1.draw(x, now)
     Fire.draw()
     if hyper > 0:
         hyper -= 1
