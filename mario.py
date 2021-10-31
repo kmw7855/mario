@@ -240,12 +240,21 @@ class pad:
     def __init__(self, x, y):
         self.x, self.y = x, y
         self.jump = 0
+        self.jum = 0
         self.image = load_image('pad.png')
     def draw(self,mario_x, mario_y):
+        global ground
+        global highjump
+        global can_move 
         self.image.draw(self.x, self.y)
+        if self.x - 35 <= mario_x <= self.x + 35:
+            pass
+        else:
+            pass
         if self.y + 40 <= mario_y <= self.y + 50 and self.x - 30 <= mario_x <= self.x + 30:
-            self.jump = 1
-            
+            highjump = 1
+
+
 
 class fire:
     def __init__(self):
@@ -351,7 +360,7 @@ flower_1 = item_1(1000, 80)
 star_1 = item_2(1400, 80)
 turtle_1 = monster_2(1200,80)
 ghost_1 = monster_3(100,200)
-pad_1 = pad(300,80)
+pad_1 = pad(900,80)
 Fire = fire()
 Coin = [coin((i+3)*200, 200) for i in range(4)]
 attack = 0
@@ -361,6 +370,8 @@ attack_state = 0
 stop_attack = 0
 low_jump = 0
 low_jump_y = 0
+highjump = 0
+highjump_y = 0
 hyper = 0
 Delay = 0.01
 change = 0
@@ -439,7 +450,19 @@ while running:
                     jum = 1
                     low_jump = 0
                     low_jump_y = 0
-
+        elif highjump == 1:
+            if right == 3:
+                frame = 6
+            else:
+                frame = 3
+            if can_move == 1:
+                y += 15
+                low_jump_y += 15
+                character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
+                if low_jump_y == 360:
+                    jum = 1
+                    highjump = 0
+                    low_jump_y = 0
         elif jum == 1:
             y -= 10
             if right == 3:
