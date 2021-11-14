@@ -251,12 +251,13 @@ class pad:
             pass
         else:
             pass
-        if self.y + 40 <= mario_y <= self.y + 50 and self.x - 30 <= mario_x <= self.x + 30:
+        if self.y + 20 <= mario_y <= self.y + 30 and self.x - 30 <= mario_x <= self.x + 30:
             highjump = 1
 
     def height(self,mario_x, mario_y):
         global ground
-        if self.x - 75 <= mario_x <= self.x + 50:
+        if self.x - 35 <= mario_x <= self.x + 35: 
+        #and self.y <= mario_y <= self.y + 70:
             ground = 140
 
 class box:
@@ -272,13 +273,19 @@ class box:
             self.image2.draw(self.x, self.y)
     def update(self,mario_x, mario_y):
         global jum, high_jump, high_jump_y, jump
-        if self.x <= mario_x <= self.x + 30 and self.y <= mario_y + 70 <= self.y + 20:
+        if self.x - 30 <= mario_x <= self.x + 30 and self.y <= mario_y + 70 <= self.y + 20:
             jum = 1
             high_jump = 0
             high_jump_y = 0
             jump = 0
             if self.status == 2:
                 self.status = 1
+    
+    def height(self,mario_x, mario_y):
+        global ground
+        if self.x - 35 <= mario_x <= self.x + 35 and self.y <= mario_y :
+            ground = 140
+
 
 class fire:
     def __init__(self):
@@ -383,7 +390,7 @@ mush_1 = monster_1(200, 80)
 flower_1 = item_1(1000, 80)
 star_1 = item_2(1400, 80)
 turtle_1 = monster_2(1200,80)
-ghost_1 = monster_3(100,200)
+ghost_1 = monster_3(-2100,200)
 pad_1 = pad(900,80)
 Fire = fire()
 Coin = [coin((i+3)*200, 200) for i in range(4)]
@@ -414,6 +421,7 @@ while running:
     turtle_1.update(300)
     box1.update(x, now)
     pad_1.height(x, now)
+    box1.height(x,now)
     for money in Coin:
         money.draw(x, now)    
     mush_1.draw(x , now)
