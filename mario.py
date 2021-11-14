@@ -402,6 +402,7 @@ Delay = 0.01
 change = 0
 
 while running:
+    ground = 90
     clear_canvas()
     now = y+ground
     #grass.draw(400, 30)
@@ -412,6 +413,7 @@ while running:
     mush_1.update(500)
     turtle_1.update(300)
     box1.update(x, now)
+    pad_1.update(x, now)
     for money in Coin:
         money.draw(x, now)    
     mush_1.draw(x , now)
