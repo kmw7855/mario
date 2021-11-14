@@ -254,7 +254,7 @@ class pad:
         if self.y + 40 <= mario_y <= self.y + 50 and self.x - 30 <= mario_x <= self.x + 30:
             highjump = 1
 
-    def update(self,mario_x, mario_y):
+    def height(self,mario_x, mario_y):
         global ground
         if self.x - 75 <= mario_x <= self.x + 50:
             ground = 140
@@ -413,7 +413,7 @@ while running:
     mush_1.update(500)
     turtle_1.update(300)
     box1.update(x, now)
-    pad_1.update(x, now)
+    pad_1.height(x, now)
     for money in Coin:
         money.draw(x, now)    
     mush_1.draw(x , now)
@@ -640,8 +640,9 @@ while running:
             else:
                 frame = 0
     update_canvas()
-    if can_move == 1:
-        x += dir * 5
+    next = x + dir * 5
+    #if 
+    x += dir * 5
     before_State = state
     delay(Delay)
 
