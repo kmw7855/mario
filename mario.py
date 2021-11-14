@@ -254,7 +254,6 @@ class pad:
         if self.y + 40 <= mario_y <= self.y + 50 and self.x - 30 <= mario_x <= self.x + 30:
             highjump = 1
 
-
 class box:
     def __init__(self, x, y, status):
         self.x, self.y = x, y
