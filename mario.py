@@ -255,6 +255,26 @@ class pad:
             highjump = 1
 
 
+class box:
+    def __init__(self, x, y, status):
+        self.x, self.y = x, y
+        self.status = status
+        self.image1 = load_image('box1.png')
+        self.image2 = load_image('box2.png')
+    def draw(self,mario_x, mario_y):
+        if self.status == 1:
+            self.image1.draw(self.x, self.y)
+        elif self.status == 2:
+            self.image2.draw(self.x, self.y)
+    def update(self,mario_x, mario_y):
+        global jum, low_jump
+        if self.x <= mario_x <= self.x + 30 and self.y <= mario_y + 70 <= self.y + 20:
+            jum = 1
+            high_jump = 0
+            high_jump_y = 0
+            jump = 0
+        if self.status == 2:
+
 
 class fire:
     def __init__(self):
@@ -471,7 +491,7 @@ while running:
                 frame = 3
             if can_move == 1:
                 character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
-                if y == 0:
+                if y <= 0:
                     jum = 0
     
         elif jump == 1:
@@ -525,7 +545,7 @@ while running:
             if can_move == 1:
                 y -= 10
                 firemario.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
-                if y == 0:
+                if y <= 0:
                     jum = 0
     
         elif jump == 1:
@@ -574,7 +594,7 @@ while running:
             if can_move == 1:
                 y -= 10
                 supermario.clip_draw(3 * 75, 75 * superright, 75, 75, x, ground + y-5)
-                if y == 0:
+                if y <= 0:
                     jum = 0
     
         elif jump == 1:
