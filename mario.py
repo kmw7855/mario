@@ -267,14 +267,14 @@ class box:
         elif self.status == 2:
             self.image2.draw(self.x, self.y)
     def update(self,mario_x, mario_y):
-        global jum, low_jump
+        global jum, high_jump, high_jump_y, jump
         if self.x <= mario_x <= self.x + 30 and self.y <= mario_y + 70 <= self.y + 20:
             jum = 1
             high_jump = 0
             high_jump_y = 0
             jump = 0
-        if self.status == 2:
-
+            if self.status == 2:
+                self.status = 1
 
 class fire:
     def __init__(self):
@@ -383,6 +383,7 @@ ghost_1 = monster_3(100,200)
 pad_1 = pad(900,80)
 Fire = fire()
 Coin = [coin((i+3)*200, 200) for i in range(4)]
+box1 = box(400, 200, 2)
 attack = 0
 attack_x = 0
 attack_y = 0
@@ -406,6 +407,7 @@ while running:
     Fire.update(stop_attack)
     mush_1.update(500)
     turtle_1.update(300)
+    box1.update(x, now)
     for money in Coin:
         money.draw(x, now)    
     mush_1.draw(x , now)
@@ -414,6 +416,7 @@ while running:
     turtle_1.draw(x, now)
     ghost_1.draw(x,now)
     pad_1.draw(x, now)
+    box1.draw(x, now)
     Fire.draw()
     if hyper > 0:
         hyper -= 1
