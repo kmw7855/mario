@@ -539,7 +539,19 @@ while running:
                     jum = 1
                     low_jump = 0
                     low_jump_y = 0
-
+        elif highjump == 1:
+            if right == 3:
+                frame = 6
+            else:
+                frame = 3
+            if can_move == 1:
+                y += 15
+                low_jump_y += 15
+                character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
+                if low_jump_y == 360:
+                    jum = 1
+                    highjump = 0
+                    low_jump_y = 0
         elif jum == 1:
             if right == 3:
                 frame = 6
@@ -592,6 +604,19 @@ while running:
                 if low_jump_y == 70:
                     jum = 1
                     low_jump = 0
+                    low_jump_y = 0
+        elif highjump == 1:
+            if right == 3:
+                frame = 6
+            else:
+                frame = 3
+            if can_move == 1:
+                y += 15
+                low_jump_y += 15
+                character.clip_draw(frame * 75, 75 * superright, 75, 75, x, ground + y)
+                if low_jump_y == 360:
+                    jum = 1
+                    highjump = 0
                     low_jump_y = 0
         elif jum == 1:
             if can_move == 1:
