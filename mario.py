@@ -251,7 +251,7 @@ class pad:
             pass
         else:
             pass
-        if self.y + 20 <= mario_y <= self.y + 30 and self.x - 30 <= mario_x <= self.x + 30:
+        if self.y + 20 <= mario_y <= self.y + 50 and self.x - 30 <= mario_x <= self.x + 30:
             highjump = 1
 
     def height(self,mario_x, mario_y):
@@ -286,7 +286,8 @@ class box:
     def height(self,mario_x, mario_y):
         global ground
         print(self.y, mario_y)
-        if self.x - 35 <= mario_x <= self.x + 35 and self.y +30 < mario_y :    
+        if self.x - 35 <= mario_x <= self.x + 35 and self.y +30 < mario_y :
+    
             ground = self.y + 50
 
 
@@ -414,20 +415,20 @@ change = 0
 while running:
     ground = 90
     clear_canvas()
-    now = y+ground
+    #now = y+ground
     #grass.draw(400, 30)
     #grass.draw(1200,30)
     sky.draw(800,512)
     ghost_1.update(200,x,now,right)
     Fire.update(stop_attack)
-    #mush_1.update(500)
+    mush_1.update(500)
     turtle_1.update(300)
     box1.update(x, now)
     pad_1.height(x, now)
     box1.height(x,now)
     for money in Coin:
         money.draw(x, now)    
-    #mush_1.draw(x , now)
+    mush_1.draw(x , now)
     flower_1.draw(x, now)
     star_1.draw(x,now)
     turtle_1.draw(x, now)
@@ -435,6 +436,7 @@ while running:
     pad_1.draw(x, now)
     box1.draw(x, now)
     Fire.draw()
+    now = y+ground
     if hyper > 0:
         hyper -= 1
     if attack == 1:
