@@ -256,9 +256,11 @@ class pad:
 
     def height(self,mario_x, mario_y):
         global ground
+        global y
         if self.x - 35 <= mario_x <= self.x + 35: 
         #and self.y <= mario_y <= self.y + 70:
             ground = 140
+            
 
 class box:
     def __init__(self, x, y, status):
@@ -283,8 +285,8 @@ class box:
     
     def height(self,mario_x, mario_y):
         global ground
-        if self.x - 35 <= mario_x <= self.x + 35 and self.y <= mario_y :
-            ground = 140
+        if self.x - 35 <= mario_x <= self.x + 35 and self.y +30 < mario_y :
+            ground = self.y + 50
 
 
 class fire:
@@ -417,14 +419,14 @@ while running:
     sky.draw(800,512)
     ghost_1.update(200,x,now,right)
     Fire.update(stop_attack)
-    mush_1.update(500)
+    #mush_1.update(500)
     turtle_1.update(300)
     box1.update(x, now)
     pad_1.height(x, now)
     box1.height(x,now)
     for money in Coin:
         money.draw(x, now)    
-    mush_1.draw(x , now)
+    #mush_1.draw(x , now)
     flower_1.draw(x, now)
     star_1.draw(x,now)
     turtle_1.draw(x, now)
@@ -491,7 +493,7 @@ while running:
                 frame = 3
             if can_move == 1:
                 character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
-                if y <= 0:
+                if y <= 0 or now == ground:
                     jum = 0
     
         elif jump == 1:
