@@ -285,7 +285,8 @@ class box:
     
     def height(self,mario_x, mario_y):
         global ground
-        if self.x - 35 <= mario_x <= self.x + 35 and self.y +30 < mario_y :
+        print(self.y, mario_y)
+        if self.x - 35 <= mario_x <= self.x + 35 and self.y +30 < mario_y :    
             ground = self.y + 50
 
 
