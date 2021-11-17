@@ -1,5 +1,6 @@
 from pico2d import *
 import game_framework
+from pad import *
 
 ground_height = [[90] * 320]
 right = 3
@@ -44,15 +45,72 @@ change = 0
 move = 0
 moving = 0
 
-class grass:
+class pad:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+        self.jump = 0
+        self.jum = 0
+        self.image = load_image('pad.png')
+    def draw(self,mario_x, mario_y):
+        global ground
+        global highjump
+        global can_move 
+        self.image.draw(self.x, self.y)
+   
+        draw_rectangle(*self.get_bb())
+
+    def height(self):
+        global ground
+        high_jump = 0
+        ground += 50 
+        y = 0
+
+    def get_bb(self):
+        return self.x - 20, self.y - 30, self.x + 20, self.y + 20
+
+class Sky:
     def __init__(self):
         self.img = load_image('cloud.jpg')
 
     def draw(self):
-        self.img.clip_draw(0+moving,0 ,1600, 1024, 800,512)
+        self.img.clip_draw(0,0 ,1600, 1024, 800,512)
 
 
+def collide(a, b):
+    left_a, bottom_a, right_a, top_a = a.get_bb()
+    left_b, bottom_b, right_b, top_b = b.get_bb()
+    if left_a > right_b: return False
+    if right_a < left_b: return False
+    if top_a < bottom_b: return False
+    if bottom_a > top_b: return False
+    return True
 
+def updown(a, b): #상하충돌
+    left_a, bottom_a, right_a, top_a = a.get_bb()
+    left_b, bottom_b, right_b, top_b = b.get_bb()
+    if left_a > right_b: return True
+    if right_a < left_b: return True
+    if top_a < bottom_b: return False
+    if bottom_a > top_b: return True
+    return True
+
+def downup(a, b): #상하충돌
+    left_a, bottom_a, right_a, top_a = a.get_bb()
+    left_b, bottom_b, right_b, top_b = b.get_bb()
+    if left_a > right_b: return True
+    if right_a < left_b: return True
+    if top_a < bottom_b: return True
+    if bottom_a > top_b: return False
+    return True
+
+def leftright(a,b):
+    left_a, bottom_a, right_a, top_a = a.get_bb()
+    left_b, bottom_b, right_b, top_b = b.get_bb()
+    if left_a > right_b: return False
+    if right_a < left_b: return False
+    if top_a < bottom_b: return True
+    if bottom_a > top_b: return True
+    return True
 
 class mario:
     def __init__(self):
@@ -72,6 +130,8 @@ class mario:
             self.img4.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
         elif state == 2:
             self.img2.clip_draw(3 * 75, 75 * superright, 75, 75, x, ground + y -5)
+        draw_rectangle(*self.get_bb())
+
 
     def update(self):
         global low_jump, y, low_jump_y, jum, running, frame, highjump, jump, can_move, right, state, superright, x, next, moving
@@ -88,7 +148,7 @@ class mario:
                 y -= 10
                 if y <= -90:
                     jum = 0
-                    running = False
+                    game_framework.quit()
         else:
             if low_jump == 1:
                 if right == 3:
@@ -172,10 +232,16 @@ class mario:
         x += dir * 5
         if move == 1:
             moving += 5
+        
+    def get_bb(self):
+        return x - 20, now - 30, x + 20, now + 20
 
+
+        
 class monster_1:
     def __init__(self, x, y):
         self.x, self.y = x, y
+        self.point = self.x
         self.image = load_image('monster1.png')
         self.move = 0
         self.turn = 0
@@ -185,17 +251,20 @@ class monster_1:
         self.right = 1
         global jum
     def update(self, range):
-        if self.move < range:
-            self.right = 1
+        if self.move > range:
+            self.right *= -1
+            self.move = 0
+        if self.right == 1:
             self.x += 3
-            self.move += 3
-            self.turn += 3           
-        else:
-            self.right = 0
+            self.move +=3
+        elif self.right == -1:
             self.x -= 3
-            self.turn -= 3
-            if self.turn < 0:
-                self.move = 0
+            self.move +=3
+
+    def turn_move(self):
+        print('turn', self.right)
+        self.right *= -1
+        self.move = 0
 
     def draw(self, mario_x, mario_y):
         global mario_die, state, point, stop_attack, low_jump, hyper
@@ -248,17 +317,20 @@ class monster_2:
         self.hp = 3
         global jum
     def update(self, range):
-        if self.move < range:
-            self.right = 1
-            self.x += 2
-            self.move += 2
-            self.turn += 2           
-        else:
-            self.right = 0
-            self.x -= 2
-            self.turn -= 2
-            if self.turn < 0:
-                self.move = 0
+        if self.move > range:
+            self.right *= -1
+            self.move = 0
+        if self.right == 1:
+            self.x += 3
+            self.move +=3
+        elif self.right == -1:
+            self.x -= 3
+            self.move +=3
+
+    def turn_move(self):
+        print('turn', self.right)
+        self.right *= -1
+        self.move = 0
 
     def draw(self, mario_x, mario_y):
         global mario_die, state, point, stop_attack, low_jump, hyper
@@ -291,6 +363,10 @@ class monster_2:
                 self.image.clip_draw(75, 0, 75, 75, self.x, self.y)
             else:
                 self.image.clip_draw(0, 0, 75, 75, self.x, self.y)
+        draw_rectangle(*self.get_bb())
+
+    def get_bb(self):
+        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
 
 class monster_3:
     def __init__(self, x, y):
@@ -367,6 +443,12 @@ class monster_3:
             else:
                 self.image.clip_draw(0, 0, 38, 38, self.x, self.y)
 
+        draw_rectangle(*self.get_bb())
+
+    def get_bb(self):
+        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
+
+
 class item_1:
     def __init__(self, x, y):
         self.x, self.y = x, y
@@ -381,6 +463,11 @@ class item_1:
             state = 1
         if self. die == 0:
             self.image.draw(self.x, self.y)
+
+        draw_rectangle(*self.get_bb())
+
+    def get_bb(self):
+        return self.x - 20, self.y - 30, self.x + 20, self.y + 20    
 
 class item_2:
     def __init__(self, x, y):
@@ -399,6 +486,11 @@ class item_2:
         if self. die == 0:
             self.image.draw(self.x, self.y)
 
+        draw_rectangle(*self.get_bb())
+
+    def get_bb(self):
+        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
+
 class coin:
     def __init__(self, x, y):
         self.x, self.y = x, y
@@ -413,30 +505,12 @@ class coin:
         if self. die == 0:
             self.image.draw(self.x, self.y)
 
-class pad:
-    def __init__(self, x, y):
-        self.x, self.y = x, y
-        self.jump = 0
-        self.jum = 0
-        self.image = load_image('pad.png')
-    def draw(self,mario_x, mario_y):
-        global ground
-        global highjump
-        global can_move 
-        self.image.draw(self.x, self.y)
-        if self.x - 35 <= mario_x <= self.x + 35:
-            pass
-        else:
-            pass
-        if self.y + 20 <= mario_y <= self.y + 40 and self.x - 30 <= mario_x <= self.x + 30:
-            highjump = 1
+        draw_rectangle(*self.get_bb())
 
-    def height(self,mario_x, mario_y):
-        global ground
-        global y
-        if self.x - 35 <= mario_x <= self.x + 35: 
-        #and self.y <= mario_y <= self.y + 70:
-            ground = 130
+    def get_bb(self):
+        return self.x - 15, self.y - 15, self.x + 15, self.y + 15
+
+
             
 
 class box:
@@ -450,6 +524,7 @@ class box:
             self.image1.draw(self.x, self.y)
         elif self.status == 2:
             self.image2.draw(self.x, self.y)
+        draw_rectangle(*self.get_bb())
     def update(self,mario_x, mario_y):
         global jum, high_jump, high_jump_y, jump
         if self.x - 30 <= mario_x <= self.x + 30 and self.y <= mario_y + 70 <= self.y + 20:
@@ -462,10 +537,14 @@ class box:
     
     def height(self,mario_x, mario_y):
         global ground
-        print(self.y, mario_y)
+        #print(self.y, mario_y)
         if self.x - 35 <= mario_x <= self.x + 35 and self.y +30 < mario_y :
     
             ground = self.y + 50
+
+
+    def get_bb(self):
+        return self.x - 25, self.y - 25, self.x + 25, self.y + 25
 
 
 class fire:
@@ -506,6 +585,11 @@ class fire:
         else:
             attack_state = 0
 
+            draw_rectangle(*self.get_bb())
+
+    def get_bb(self):
+        return self.x - 20, self.y - 30, self.x + 20, self.y + 20
+
 
 def handle_events():
     global running
@@ -536,7 +620,7 @@ def handle_events():
 
         elif event.type == SDL_KEYDOWN and mario_die == 1:
             if event.key == SDLK_ESCAPE:
-                running = False
+                game_framework.quit()
                 print(point)        
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
@@ -569,13 +653,13 @@ def enter():
     flower_1 = item_1(1000, 80)
     star_1 = item_2(1400, 80)
     turtle_1 = monster_2(1200,80)
-    ghost_1 = monster_3(-2100,200)
+    ghost_1 = monster_3(1000,200)
     pad_1 = pad(900,80)
     Fire = fire()
     Coin = [coin((i+3)*200, 200) for i in range(4)]
     box1 = box(400, 200, 2)
     Mario = mario()
-    sky = grass()
+    sky = Sky()
     attack = 0
     attack_x = 0
     attack_y = 0
@@ -610,8 +694,14 @@ def update():
     turtle_1.update(300)
     box1.update(x, now)
     Mario.update()
-    pad_1.height(x, now)
     box1.height(x,now)
+    if collide(mush_1, pad_1):
+        mush_1.turn_move()
+    if downup(Mario, pad_1) and leftright(Mario, pad_1):
+        pad_1.height()
+        #Mario.Highjump()
+        print(ground, now, low_jump_y)
+        #Delay = 0.1
 
 def draw():
     clear_canvas()
