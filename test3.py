@@ -40,6 +40,7 @@ low_jump = 0
 low_jump_y = 0
 highjump = 0
 highjump_y = 0
+jumping = 0
 hyper = 0
 Delay = 0.01
 change = 0
@@ -47,6 +48,8 @@ move = 0
 moving = 0
 camera_move = 0
 can_move2 = 1
+
+
 
 class pad:
     def __init__(self, x, y):
@@ -139,6 +142,7 @@ def leftandright(a,b):
     if top_a < bottom_b: return True
     if bottom_a > top_b: return True
     return True
+
 class mario:
     def __init__(self):
         #self.x = 100, self.y = 90
@@ -160,7 +164,7 @@ class mario:
 
 
     def update(self):
-        global low_jump, y, low_jump_y, jum, running, frame, highjump, jump, can_move, right, state, superright, x, next, moving, camera_move, superright, Delay
+        global low_jump, y, low_jump_y, jum, running, frame, highjump, jump, can_move, right, state, superright, x, next, moving, camera_move, superright, Delay, jumping
         if right == 3:
             superright = 0
         else:
@@ -190,8 +194,8 @@ class mario:
                 if can_move == 1:
                     self.superframe = 3
                     y += 10
-                    low_jump_y += 10
-                    if low_jump_y == 70:
+                    jumping += 10
+                    if jumping == 70:
                         jum = 1
                         low_jump = 0
                         low_jump_y = 0
@@ -203,31 +207,33 @@ class mario:
                     frame = 3
                 if can_move == 1:
                     y += 15
-                    low_jump_y += 15
-                    if low_jump_y == 360:
+                    jumping += 15
+                    if jumping == 360:
                         jum = 1
                         highjump = 0
                         low_jump_y = 0
             elif jum == 1:
                 self.superframe = 3
                 y -= 10
+                jumping -= 10
                 if right == 3:
                     frame = 6
                 else:
                     frame = 3
                 if can_move == 1:
-                    if y <= 0 or now == ground:
+                    if jumping == 0:
                         jum = 0
         
             elif jump == 1:
                 self.superframe = 3
                 y += 10
+                jumping += 10
                 if right == 3:
                     frame = 6
                 else:
                     frame = 3
                 if can_move == 1:
-                    if y == 200:
+                    if jumping == 200:
                         jum = 1
                         jump = 0
             
@@ -599,7 +605,7 @@ class box:
     def get_bb(self):
         return self.x - 25, self.y - 25, self.x + 25, self.y + 25
     def obj_y(self):
-        return self.y + 20
+        return self.y + 30
 
 
 class fire:
@@ -688,7 +694,7 @@ def handle_events():
 
 def enter():
     global sky, Mario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change, move, moving
-    global can_move2
+    global can_move2, jumping
     right = 3
     superright = 0
     state = 0
@@ -725,6 +731,7 @@ def enter():
     low_jump_y = 0
     highjump = 0
     highjump_y = 0
+    jumping = 0
     hyper = 0
     Delay = 0.01
     change = 0
@@ -741,7 +748,7 @@ def exit():
 def update():
     
     global sky, Mario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change, move, moving
-    global can_move2
+    global can_move2, jumping
     ground = 90
     if collide(mush_1, pad_1):
         mush_1.turn_move()
@@ -765,9 +772,8 @@ def update():
         x -= 5
         can_move2 = 0 
     
-    if downup(Mario, box1) and leftandright(Mario, pad_1) :
-        ground = box1.obj_y()
-        print( box1.obj_y())
+    
+        
     now = y+ground
     #grass.draw(400, 30)
     #grass.draw(1200,30)
