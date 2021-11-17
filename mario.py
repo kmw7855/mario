@@ -61,6 +61,11 @@ class monster_1:
                 self.image.clip_draw(75, 0, 75, 75, self.x, self.y)
             else:
                 self.image.clip_draw(0, 0, 75, 75, self.x, self.y)
+        draw_rectangle(*self.get_bb())
+
+    def get_bb(self):
+        return self.x - 20, self.y - 30, self.x + 20, self.y + 20
+
 
 class monster_2:
     def __init__(self, x, y):
@@ -340,6 +345,7 @@ def handle_events():
     global jump
     global right
     global attack
+    global move
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -348,6 +354,7 @@ def handle_events():
             if event.key == SDLK_RIGHT:
                 dir += 1
                 right = 3
+                move = 1
             elif event.key == SDLK_LEFT:
                 dir -= 1
                 right = 1
@@ -368,10 +375,13 @@ def handle_events():
                 dir -= 1
             elif event.key == SDLK_LEFT:
                 dir += 1
+        if event.type == SDL_KEYUP and mario_die == 0 and can_move == 1:
+            if event.key == SDLK_RIGHT:
+                move = 0
             
 
 
-open_canvas(1600, 1024)
+open_canvas(800, 600)
 #grass = load_image('grass.png')
 def enter():
     sky = load_image('cloud.jpg')
@@ -395,7 +405,7 @@ def enter():
     jum = 0  #점프후 내려오기
     mario_die = 0  #주인공 죽음
     point = 0
-    mush_1 = monster_1(200, 80)
+    mush_1 = monster_1(1000, 80)
     flower_1 = item_1(1000, 80)
     star_1 = item_2(1400, 80)
     turtle_1 = monster_2(1200,80)
@@ -427,7 +437,7 @@ state = 0
 before_state = 0
 can_move = 1
 running = True
-x = 1600 // 2
+x = 300
 frame = 0
 dir = 0
 y = 0   #점프높이
@@ -437,7 +447,7 @@ jump  = 0  #점프
 jum = 0  #점프후 내려오기
 mario_die = 0  #주인공 죽음
 point = 0
-mush_1 = monster_1(200, 80)
+mush_1 = monster_1(500, 80)
 flower_1 = item_1(1000, 80)
 star_1 = item_2(1400, 80)
 turtle_1 = monster_2(1200,80)
@@ -458,6 +468,8 @@ highjump_y = 0
 hyper = 0
 Delay = 0.01
 change = 0
+move = 0
+moving = 0
 
 while running:
     ground = 90
@@ -465,7 +477,8 @@ while running:
     now = y+ground
     #grass.draw(400, 30)
     #grass.draw(1200,30)
-    sky.draw(800,512)
+    sky.clip_draw(0+moving,0 ,800, 600, 400,300)
+    print(moving)
     ghost_1.update(200,x,now,right)
     Fire.update(stop_attack)
     mush_1.update(500)
@@ -703,6 +716,8 @@ while running:
     next = x + dir * 5
     #if 
     x += dir * 5
+    if move == 1:
+        moving += 5
     before_State = state
     delay(Delay)
 
