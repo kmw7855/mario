@@ -1,5 +1,9 @@
 from pico2d import *
 
+ground_height = [[90] * 320]
+print(ground_height)
+
+
 class monster_1:
     def __init__(self, x, y):
         self.x, self.y = x, y
@@ -251,7 +255,7 @@ class pad:
             pass
         else:
             pass
-        if self.y + 20 <= mario_y <= self.y + 50 and self.x - 30 <= mario_x <= self.x + 30:
+        if self.y + 20 <= mario_y <= self.y + 40 and self.x - 30 <= mario_x <= self.x + 30:
             highjump = 1
 
     def height(self,mario_x, mario_y):
@@ -259,7 +263,7 @@ class pad:
         global y
         if self.x - 35 <= mario_x <= self.x + 35: 
         #and self.y <= mario_y <= self.y + 70:
-            ground = 140
+            ground = 130
             
 
 class box:
@@ -369,6 +373,49 @@ def handle_events():
 
 open_canvas(1600, 1024)
 #grass = load_image('grass.png')
+def enter():
+    sky = load_image('cloud.jpg')
+    character = load_image('mario.png')
+    supermario = load_image('supermario2.png')
+    diemario = load_image('death.png')
+    firemario = load_image('supermario3.png')
+    right = 3
+    superright = 0
+    state = 0
+    before_state = 0
+    can_move = 1
+    running = True
+    x = 1600 // 2
+    frame = 0
+    dir = 0
+    y = 0   #점프높이
+    ground = 90 #땅
+    now = y+ground
+    jump  = 0  #점프
+    jum = 0  #점프후 내려오기
+    mario_die = 0  #주인공 죽음
+    point = 0
+    mush_1 = monster_1(200, 80)
+    flower_1 = item_1(1000, 80)
+    star_1 = item_2(1400, 80)
+    turtle_1 = monster_2(1200,80)
+    ghost_1 = monster_3(-2100,200)
+    pad_1 = pad(900,80)
+    Fire = fire()
+    Coin = [coin((i+3)*200, 200) for i in range(4)]
+    box1 = box(400, 200, 2)
+    attack = 0
+    attack_x = 0
+    attack_y = 0
+    attack_state = 0
+    stop_attack = 0
+    low_jump = 0
+    low_jump_y = 0
+    highjump = 0
+    highjump_y = 0
+    hyper = 0
+    Delay = 0.01
+    change = 0
 sky = load_image('cloud.jpg')
 character = load_image('mario.png')
 supermario = load_image('supermario2.png')
@@ -415,7 +462,7 @@ change = 0
 while running:
     ground = 90
     clear_canvas()
-    #now = y+ground
+    now = y+ground
     #grass.draw(400, 30)
     #grass.draw(1200,30)
     sky.draw(800,512)
@@ -436,7 +483,7 @@ while running:
     pad_1.draw(x, now)
     box1.draw(x, now)
     Fire.draw()
-    now = y+ground
+    #now = y+ground
     if hyper > 0:
         hyper -= 1
     if attack == 1:
