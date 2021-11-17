@@ -1,10 +1,177 @@
 from pico2d import *
+import game_framework
 
 ground_height = [[90] * 320]
-print(ground_height)
+right = 3
+superright = 0
+state = 0
+before_state = 0
+can_move = 1
+running = True
+x = 300
+frame = 0
+dir = 0
+y = 0   #점프높이
+ground = 90 #땅
+now = y+ground
+jump  = 0  #점프
+jum = 0  #점프후 내려오기
+mario_die = 0  #주인공 죽음
+point = 0
+mush_1 = None
+flower_1 = None
+star_1 = None
+turtle_1 = None
+ghost_1 = None
+pad_1 = None
+Fire = None
+Coin = None
+box1 = None
+Mario = None
+sky = None
+attack = 0
+attack_x = 0
+attack_y = 0
+attack_state = 0
+stop_attack = 0
+low_jump = 0
+low_jump_y = 0
+highjump = 0
+highjump_y = 0
+hyper = 0
+Delay = 0.01
+change = 0
+move = 0
+moving = 0
+
+class grass:
+    def __init__(self):
+        self.img = load_image('cloud.jpg')
+
+    def draw(self):
+        self.img.clip_draw(0+moving,0 ,1600, 1024, 800,512)
 
 
 
+
+class mario:
+    def __init__(self):
+        #self.x = 100, self.y = 90
+        self.img = load_image('mario.png')
+        self.img2 = load_image('supermario2.png')
+        self.img3 = load_image('death.png')
+        self.img4 = load_image('supermario3.png')
+
+
+    def draw(self):
+        if mario_die == 1:
+            self.img3.draw(x, ground + y)
+        elif state == 0:
+            self.img.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
+        elif state == 1:
+            self.img4.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
+        elif state == 2:
+            self.img2.clip_draw(3 * 75, 75 * superright, 75, 75, x, ground + y -5)
+
+    def update(self):
+        global low_jump, y, low_jump_y, jum, running, frame, highjump, jump, can_move, right, state, superright, x, next, moving
+        if mario_die == 1:
+            if low_jump == 1:
+                y += 10
+                low_jump_y += 10
+            
+            if low_jump_y == 70:
+                jum = 1
+                low_jump = 0
+                low_jump_y = 0
+            elif jum == 1:
+                y -= 10
+                if y <= -90:
+                    jum = 0
+                    running = False
+        else:
+            if low_jump == 1:
+                if right == 3:
+                    frame = 6
+                else:
+                    frame = 3
+                if can_move == 1:
+                    y += 10
+                    low_jump_y += 10
+                    if low_jump_y == 70:
+                        jum = 1
+                        low_jump = 0
+                        low_jump_y = 0
+            elif highjump == 1:
+                if right == 3:
+                    frame = 6
+                else:
+                    frame = 3
+                if can_move == 1:
+                    y += 15
+                    low_jump_y += 15
+                    if low_jump_y == 360:
+                        jum = 1
+                        highjump = 0
+                        low_jump_y = 0
+            elif jum == 1:
+                y -= 10
+                if right == 3:
+                    frame = 6
+                else:
+                    frame = 3
+                if can_move == 1:
+                    if y <= 0 or now == ground:
+                        jum = 0
+        
+            elif jump == 1:
+                y += 10
+                if right == 3:
+                    frame = 6
+                else:
+                    frame = 3
+                if can_move == 1:
+                    if y == 200:
+                        jum = 1
+                        jump = 0
+            
+            else:
+                if right == 3:
+                    if dir == 1:
+                        frame = (frame + 1) % 3 + 1
+                    else:
+                        frame = 0
+                elif right == 1:
+                    if dir == -1:
+                        frame = (frame + 1) % 3 + 6
+                    else:
+                        frame = 9
+        
+        if state == 2:
+            if right == 3:
+                superright = 0
+            else:
+                superright = 1
+           
+            if superright == 1:
+                if dir == -1:
+                    frame = (frame + 1) % 3 + 4
+                else:
+                    frame = 6
+            elif superright == 0:
+                if dir == 1:
+                    frame = (frame + 1) % 3 
+                else:
+                    frame = 0
+
+        if hyper == 0:
+            state = 0
+
+
+        next = x + dir * 5
+        x += dir * 5
+        if move == 1:
+            moving += 5
 
 class monster_1:
     def __init__(self, x, y):
@@ -63,6 +230,10 @@ class monster_1:
                 self.image.clip_draw(75, 0, 75, 75, self.x, self.y)
             else:
                 self.image.clip_draw(0, 0, 75, 75, self.x, self.y)
+        draw_rectangle(*self.get_bb())
+
+    def get_bb(self):
+        return self.x - 20, self.y - 30, self.x + 20, self.y + 20
 
 class monster_2:
     def __init__(self, x, y):
@@ -336,63 +507,22 @@ class fire:
             attack_state = 0
 
 
-sky = load_image('cloud.jpg')
-character = load_image('mario.png')
-supermario = load_image('supermario2.png')
-diemario = load_image('death.png')
-firemario = load_image('supermario3.png')
-right = 3
-superright = 0
-state = 0
-before_state = 0
-can_move = 1
-running = True
-x = 1600 // 2
-frame = 0
-dir = 0
-y = 0   #점프높이
-ground = 90 #땅
-now = y+ground
-jump  = 0  #점프
-jum = 0  #점프후 내려오기
-mario_die = 0  #주인공 죽음
-point = 0
-mush_1 = monster_1(200, 80)
-flower_1 = item_1(1000, 80)
-star_1 = item_2(1400, 80)
-turtle_1 = monster_2(1200,80)
-ghost_1 = monster_3(-2100,200)
-pad_1 = pad(900,80)
-Fire = fire()
-Coin = [coin((i+3)*200, 200) for i in range(4)]
-box1 = box(400, 200, 2)
-attack = 0
-attack_x = 0
-attack_y = 0
-attack_state = 0
-stop_attack = 0
-low_jump = 0
-low_jump_y = 0
-highjump = 0
-highjump_y = 0
-hyper = 0
-Delay = 0.01
-change = 0
-
 def handle_events():
     global running
     global dir
     global jump
     global right
     global attack
+    global move
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
-            running = False
+            game_framework.quit()
         elif event.type == SDL_KEYDOWN and mario_die == 0 and can_move == 1:
             if event.key == SDLK_RIGHT:
                 dir += 1
                 right = 3
+                move = 1
             elif event.key == SDLK_LEFT:
                 dir -= 1
                 right = 1
@@ -402,8 +532,8 @@ def handle_events():
                 if state == 1:
                     attack = 1
             elif event.key == SDLK_ESCAPE:
-                running = False
-                print(point)
+                game_framework.quit()
+
         elif event.type == SDL_KEYDOWN and mario_die == 1:
             if event.key == SDLK_ESCAPE:
                 running = False
@@ -413,22 +543,19 @@ def handle_events():
                 dir -= 1
             elif event.key == SDLK_LEFT:
                 dir += 1
-            
+        if event.type == SDL_KEYUP and mario_die == 0 and can_move == 1:
+            if event.key == SDLK_RIGHT:
+                move = 0
 
-
-open_canvas(1600, 1024)
-#grass = load_image('grass.png')
 def enter():
-    global sky, character, supermario, diemario, firemario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change
-
-    
+    global sky, Mario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change, move, moving
     right = 3
     superright = 0
     state = 0
     before_state = 0
     can_move = 1
     running = True
-    x = 1600 // 2
+    x = 300
     frame = 0
     dir = 0
     y = 0   #점프높이
@@ -438,7 +565,7 @@ def enter():
     jum = 0  #점프후 내려오기
     mario_die = 0  #주인공 죽음
     point = 0
-    mush_1 = monster_1(200, 80)
+    mush_1 = monster_1(500, 80)
     flower_1 = item_1(1000, 80)
     star_1 = item_2(1400, 80)
     turtle_1 = monster_2(1200,80)
@@ -447,6 +574,8 @@ def enter():
     Fire = fire()
     Coin = [coin((i+3)*200, 200) for i in range(4)]
     box1 = box(400, 200, 2)
+    Mario = mario()
+    sky = grass()
     attack = 0
     attack_x = 0
     attack_y = 0
@@ -459,27 +588,35 @@ def enter():
     hyper = 0
     Delay = 0.01
     change = 0
+    move = 0
+    moving = 0
+
+
+
+def exit():
+    pass
+
 
 
 def update():
-    global sky, character, supermario, diemario, firemario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point,mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change
-
+    global sky, Mario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change, move, moving
     ground = 90
-    clear_canvas()
     now = y+ground
     #grass.draw(400, 30)
     #grass.draw(1200,30)
-    sky.draw(800,512)
     ghost_1.update(200,x,now,right)
     Fire.update(stop_attack)
     mush_1.update(500)
     turtle_1.update(300)
     box1.update(x, now)
+    Mario.update()
     pad_1.height(x, now)
     box1.height(x,now)
 
 def draw():
-    global sky, character, supermario, diemario, firemario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point,mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change
+    clear_canvas()
+    global sky, Mario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change, move, moving
+    sky.draw()
     for money in Coin:
         money.draw(x, now)    
     mush_1.draw(x , now)
@@ -489,8 +626,8 @@ def draw():
     ghost_1.draw(x,now)
     pad_1.draw(x, now)
     box1.draw(x, now)
+    Mario.draw()
     Fire.draw()
-    #now = y+ground
     if hyper > 0:
         hyper -= 1
     if attack == 1:
@@ -498,223 +635,18 @@ def draw():
         Fire.shoot(x, now, right)
         attack = 0
 
-       
-    if mario_die == 1:
-        Delay = 0.05
-        if low_jump == 1:
-            y += 10
-            low_jump_y += 10
-            diemario.draw(x, ground + y)
-            if low_jump_y == 70:
-                jum = 1
-                low_jump = 0
-                low_jump_y = 0
-        elif jum == 1:
-            y -= 10
-            diemario.draw(x, ground + y)
-            if y <= -90:
-                jum = 0
-                running = False
-    elif state == 0:
-        if low_jump == 1:
-            if right == 3:
-                frame = 6
-            else:
-                frame = 3
-            if can_move == 1:
-                y += 10
-                low_jump_y += 10
-                character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
-                if low_jump_y == 70:
-                    jum = 1
-                    low_jump = 0
-                    low_jump_y = 0
-        elif highjump == 1:
-            if right == 3:
-                frame = 6
-            else:
-                frame = 3
-            if can_move == 1:
-                y += 15
-                low_jump_y += 15
-                character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
-                if low_jump_y == 360:
-                    jum = 1
-                    highjump = 0
-                    low_jump_y = 0
-        elif jum == 1:
-            y -= 10
-            if right == 3:
-                frame = 6
-            else:
-                frame = 3
-            if can_move == 1:
-                character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
-                if y <= 0 or now == ground:
-                    jum = 0
-    
-        elif jump == 1:
-            y += 10
-            if right == 3:
-                frame = 6
-            else:
-                frame = 3
-            if can_move == 1:
-                character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
-                if y == 200:
-                    jum = 1
-                    jump = 0
-        else:
-            character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground)
+    handle_events()       
 
-        if mario_die == 1:
-            point += 1
-
-        handle_events()
-        if right == 3:
-            if dir == 1:
-                frame = (frame + 1) % 3 + 1
-            else:
-                frame = 0
-        elif right == 1:
-            if dir == -1:
-                frame = (frame + 1) % 3 + 6
-            else:
-                frame = 9
-    elif state == 1:
-        if low_jump == 1:
-            if right == 3:
-                frame = 6
-            else:
-                frame = 3
-            if can_move == 1:
-                y += 10
-                low_jump_y += 10
-                firemario.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
-                if low_jump_y == 70:
-                    jum = 1
-                    low_jump = 0
-                    low_jump_y = 0
-        elif highjump == 1:
-            if right == 3:
-                frame = 6
-            else:
-                frame = 3
-            if can_move == 1:
-                y += 15
-                low_jump_y += 15
-                character.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
-                if low_jump_y == 360:
-                    jum = 1
-                    highjump = 0
-                    low_jump_y = 0
-        elif jum == 1:
-            if right == 3:
-                frame = 6
-            else:
-                frame = 3
-            if can_move == 1:
-                y -= 10
-                firemario.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
-                if y <= 0:
-                    jum = 0
-    
-        elif jump == 1:
-            if right == 3:
-                frame = 6
-            else:
-                frame = 3
-            if can_move == 1:
-                y += 10
-                firemario.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
-                if y == 200:
-                    jum = 1
-                    jump = 0
-        else:
-            firemario.clip_draw(frame * 75, 75 * right, 75, 75, x, ground)
-
-        if mario_die == 1:
-            point += 1
-
-        handle_events()
-        if right == 3:
-            if dir == 1:
-                frame = (frame + 1) % 3 + 1
-            else:
-                frame = 0
-        elif right == 1:
-            if dir == -1:
-                frame = (frame + 1) % 3 + 6
-            else:
-                frame = 9
-    elif state == 2:
-        if right == 3:
-            superright = 0
-        else:
-            superright = 1
-        if low_jump == 1:
-            if can_move == 1:
-                y += 10
-                low_jump_y += 10
-                character.clip_draw(3 * 75, 75 * superright, 75, 75, x, ground + y -5)
-                if low_jump_y == 70:
-                    jum = 1
-                    low_jump = 0
-                    low_jump_y = 0
-        elif highjump == 1:
-            if right == 3:
-                frame = 6
-            else:
-                frame = 3
-            if can_move == 1:
-                y += 15
-                low_jump_y += 15
-                character.clip_draw(frame * 75, 75 * superright, 75, 75, x, ground + y)
-                if low_jump_y == 360:
-                    jum = 1
-                    highjump = 0
-                    low_jump_y = 0
-        elif jum == 1:
-            if can_move == 1:
-                y -= 10
-                supermario.clip_draw(3 * 75, 75 * superright, 75, 75, x, ground + y-5)
-                if y <= 0:
-                    jum = 0
-    
-        elif jump == 1:
-            if can_move == 1:
-                y += 10
-                supermario.clip_draw(3 * 75, 75 * superright, 75, 75, x, ground + y-5)
-                if y == 200:
-                    jum = 1
-                    jump = 0
-        else:
-            supermario.clip_draw(frame * 75, 75 * superright, 75, 75, x, ground-5)
-        if hyper == 0:
-            state = 0
-
-
-
-        handle_events()
-        if superright == 1:
-            if dir == -1:
-                frame = (frame + 1) % 3 + 4
-            else:
-                frame = 6
-        elif superright == 0:
-            if dir == 1:
-                frame = (frame + 1) % 3 
-            else:
-                frame = 0
     update_canvas()
-    next = x + dir * 5
+    
     #if 
-    x += dir * 5
-    before_State = state
+    
     delay(Delay)
- 
-def exit():
-    pass
+
+
+
+
+
 
 def pause(): pass
 
