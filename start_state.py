@@ -1,6 +1,6 @@
 import game_framework
 from pico2d import *
-import mario
+import mario2
 
 
 name = "StartState"
@@ -24,7 +24,7 @@ def update():
     global logo_time
     if (logo_time > 1.0):
         logo_time = 0
-    #game_framework.change_state(mario)
+    game_framework.change_state(mario2)
     delay(0.01)
     logo_time += 0.01
 
