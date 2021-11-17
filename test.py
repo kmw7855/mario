@@ -3,6 +3,16 @@ from pico2d import *
 ground_height = [[90] * 320]
 print(ground_height)
 
+class grass:
+    def __init__(self):
+        self.img = load_image('cloud.jpg')
+
+    def draw(self):
+        self.img.clip_draw(0+moving,0 ,800, 600, 400,300)
+
+
+
+
 class mario:
     def __init__(self):
         #self.x = 100, self.y = 90
@@ -546,11 +556,7 @@ def enter():
     hyper = 0
     Delay = 0.01
     change = 0
-sky = load_image('cloud.jpg')
-character = load_image('mario.png')
-supermario = load_image('supermario2.png')
-diemario = load_image('death.png')
-firemario = load_image('supermario3.png')
+
 right = 3
 superright = 0
 state = 0
@@ -577,6 +583,7 @@ Fire = fire()
 Coin = [coin((i+3)*200, 200) for i in range(4)]
 box1 = box(400, 200, 2)
 Mario = mario()
+sky = grass()
 attack = 0
 attack_x = 0
 attack_y = 0
@@ -597,9 +604,8 @@ while running:
     ground = 90
     clear_canvas()
     now = y+ground
-    #grass.draw(400, 30)
-    #grass.draw(1200,30)
-    sky.clip_draw(0+moving,0 ,800, 600, 400,300)
+    sky.draw()
+    
     print(moving)
     ghost_1.update(200,x,now,right)
     Fire.update(stop_attack)
