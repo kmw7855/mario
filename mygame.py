@@ -1,8 +1,9 @@
 import game_framework
 import pico2d
-import mario
+#import mario
+import start_state
 
 
 pico2d.open_canvas()
-game_framework.run(mario)
+game_framework.run(start_state)
 pico2d.close_canvas()
