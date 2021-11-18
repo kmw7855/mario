@@ -3,6 +3,8 @@ import game_framework
 #from pad import *
 import game_world
 
+speed = 20
+
 ground_height = [[90] * 320]
 right = 3
 superright = 0
@@ -31,6 +33,7 @@ Coin = None
 box1 = None
 Mario = None
 sky = None
+#coin1 = None
 attack = 0
 attack_x = 0
 attack_y = 0
@@ -59,7 +62,7 @@ class pad:
         self.image = load_image('pad.png')
     def draw(self,mario_x, mario_y):
         if right == 3 and camera_move < moving:
-            self.x = self.x - 5
+            self.x = self.x - speed
         global ground
         global highjump
         global can_move 
@@ -209,10 +212,9 @@ class mario:
                 if can_move == 1:
                     now += 15
                     jumping += 15
-                    if now >= 400 + ground:
+                    if jumping == 360:
                         jum = 1
                         highjump = 0
-                        low_jump_y = 0
             elif jum == 1:
                 self.superframe = 3
                 now -= 10
@@ -243,7 +245,7 @@ class mario:
             elif now >= ground:
                 self.superframe = 3
                 now -= 10
-                jumping -= 10
+                jumping = 0
                 if right == 3:
                     frame = 6
                 else:
@@ -287,11 +289,11 @@ class mario:
         next = x + dir * 5
         if can_move2 == 1:
             if right == 1:
-                x += dir * 5
+                x += dir * speed
             elif x < 800:
-                x += dir * 5
+                x += dir * speed
             elif move == 1: 
-                moving += 5
+                moving += speed
             
         
     def get_bb(self):
@@ -313,7 +315,7 @@ class monster_1:
         global jum
     def update(self, range):
         if right == 3 and camera_move < moving:
-            self.x = self.x - 5
+            self.x = self.x - speed
         if self.move > range:
             self.right *= -1
             self.move = 0
@@ -381,7 +383,7 @@ class monster_2:
         global jum
     def update(self, range):
         if right == 3 and camera_move < moving:
-            self.x = self.x - 5
+            self.x = self.x - speed
         if self.move > range:
             self.right *= -1
             self.move = 0
@@ -447,7 +449,7 @@ class monster_3:
         global jum
     def update(self, range,mario_x, mario_y, arrow):
         if right == 3 and camera_move < moving:
-            self.x = self.x - 5
+            self.x = self.x - speed
         
         if arrow == 3:
             self.mario = 1
@@ -526,7 +528,7 @@ class item_1:
         global state
         global point
         if right == 3 and camera_move < moving:
-            self.x = self.x - 5
+            self.x = self.x - speed
         
         if self.die == 0 and self.y <= mario_y <= self.y + 50 and self.x - 30 <= mario_x <= self.x + 30:
             self.die = 1
@@ -550,7 +552,7 @@ class item_2:
         global point
         global hyper
         if right == 3 and camera_move < moving:
-            self.x = self.x - 5
+            self.x = self.x - speed
         
         if self.die == 0 and self.y <= mario_y <= self.y + 50 and self.x - 50 <= mario_x <= self.x + 50:
             self.die = 1
@@ -574,7 +576,7 @@ class coin:
         global state
         global point
         if right == 3 and camera_move < moving:
-            self.x = self.x - 5
+            self.x = self.x - speed
         
         if self.die == 0 and self.y <= mario_y <= self.y + 50 and self.x - 50 <= mario_x <= self.x + 50:
             self.die = 1
@@ -598,7 +600,7 @@ class box:
         self.image2 = load_image('box2.png')
     def draw(self,mario_x, mario_y):
         if right == 3 and camera_move < moving:
-            self.x = self.x - 5
+            self.x = self.x - speed
         
         if self.status == 1:
             self.image1.draw(self.x, self.y)
@@ -607,7 +609,7 @@ class box:
         draw_rectangle(*self.get_bb())
     def update(self,mario_x, mario_y):
         global jum, high_jump, high_jump_y, jump
-        if self.x - 30 <= mario_x <= self.x + 30 and self.y <= mario_y + 70 <= self.y + 20:
+        if self.x - 30 <= mario_x <= self.x + 30 and self.y <= mario_y + 50 <= self.y + 20:
             jum = 1
             high_jump = 0
             high_jump_y = 0
@@ -624,7 +626,7 @@ class box:
         return self.y + 30
 
 
-class fire:
+class fire:               #오류있음
     def __init__(self):
         self.x, self.y = 0, 0
         self.image = load_image('fire.png')
@@ -694,6 +696,8 @@ def handle_events():
                     attack = 1
             elif event.key == SDLK_ESCAPE:
                 game_framework.quit()
+            elif event.key == SDLK_SPACE:
+                print(800+moving)
 
         elif event.type == SDL_KEYDOWN and mario_die == 1:
             if event.key == SDLK_ESCAPE:
@@ -710,7 +714,7 @@ def handle_events():
 
 def enter():
     global sky, Mario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change, move, moving
-    global can_move2, jumping
+    global can_move2, jumping, coin1, coin2, coin3, coin4, coin5, coin6, coin7, coin8, coin9, coin10, coin11, coin12, coin13, coin14
     right = 3
     superright = 0
     state = 0
@@ -727,15 +731,31 @@ def enter():
     jum = 0  #점프후 내려오기
     mario_die = 0  #주인공 죽음
     point = 0
-    mush_1 = monster_1(500, 80)
-    flower_1 = item_1(1000, 80)
-    star_1 = item_2(1400, 80)
-    turtle_1 = monster_2(1200,80)
+    mush_1 = monster_1(1700, 80)
+    flower_1 = item_1(3000, 80)
+    star_1 = item_2(8000, 80)
+    turtle_1 = monster_2(5000,80)
     #ghost_1 = monster_3(3000,200)
-    pad_1 = pad(900,80)
+    pad_1 = pad(8600,80)
     Fire = fire()
     Coin = [coin((i+3)*200, 200) for i in range(4)]
-    box1 = box(400, 100, 2)
+
+    coin1 = coin(1400, 80)
+    coin2 = coin(1550, 80)
+    coin3 = coin(3160, 80)
+    coin4 = coin(3300, 80)
+    coin5 = coin(4020, 80)
+    coin6 = coin(4350, 80)
+    coin7 = coin(4540, 80)
+    coin8 = coin(3880, 80)
+    coin9 = coin(4220, 80)
+    coin10 = coin(4970, 80)
+    coin11 = coin(8710, 80)
+    coin12 = coin(9820, 80)
+    coin13 = coin(9200, 80)
+    coin14 = coin(9420, 80)
+
+    box1 = box(3400, 150, 2)
     Mario = mario()
     sky = Sky()
     attack = 0
@@ -764,8 +784,12 @@ def exit():
 def update():
     
     global sky, Mario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change, move, moving
-    global can_move2, jumping
+    global can_move2, jumping, mario_die
     ground = 90
+    if now == 0:
+        mario_die = 1
+    if 1400 <= x <= 1550 or 3160 <= x <= 3300 or 3880 <= x <= 4020 or 4220 <= x <= 4350 or 4540 <= x <= 4670 or 4840 <= x <= 4970 or 8710 <= x <= 9200 or 9420 <= x <= 9820:
+        ground = 0  
     if collide(mush_1, pad_1):
         mush_1.turn_move()
     if collide(Mario, flower_1):
@@ -779,26 +803,24 @@ def update():
     if downup(Mario, pad_1) and leftandright(Mario, pad_1) :
         pad_1.height()
 
-    if leftright(Mario, box1) == False and now < box1.obj_y() and now + 75 >  box1.obj_y() - 20:
-        print ('helolo')
+    if leftright(Mario, box1) == False and now < box1.obj_y() + 40 and now + 75 >  box1.obj_y() - 20:
         x += 5
         can_move2 = 0
-    if rightleft(Mario, box1) == False and now < box1.obj_y() and now + 75 >  box1.obj_y() - 20:
-        print ('helolo')
+    if rightleft(Mario, box1) == False and now < box1.obj_y() + 40 and now + 75 >  box1.obj_y() - 20:  
         x -= 5
         can_move2 = 0 
     
     if now > box1.obj_y() and leftandright(Mario, box1):
         ground = box1.obj_y() + 30
-        print( box1.obj_y())
 
+    print(ground)
         
     
     #grass.draw(400, 30)
     #grass.draw(1200,30)
     #ghost_1.update(200,x,now,right)
     Fire.update(stop_attack)
-    mush_1.update(500)
+    mush_1.update(200)
     turtle_1.update(300)
     box1.update(x, now)
     Mario.update()
@@ -826,6 +848,21 @@ def draw():
     box1.draw(x, now)
     Mario.draw()
     Fire.draw()
+    coin1.draw(x, now)
+    coin2.draw(x, now)
+    coin3.draw(x, now)
+    coin4.draw(x, now)
+    coin5.draw(x, now)
+    coin6.draw(x, now)
+    coin7.draw(x, now)
+    coin8.draw(x, now)
+    coin9.draw(x, now)
+    coin10.draw(x, now)
+    coin11.draw(x, now)
+    coin12.draw(x, now)
+    coin13.draw(x, now)
+    coin14.draw(x, now)
+    
     for game_object in game_world.all_objects():
         game_object.draw(x, now)
     if attack == 1:
