@@ -2,7 +2,7 @@ from pico2d import *
 import game_framework
 #from pad import *
 import game_world
-
+import title
 speed = 20
 
 ground_height = [[90] * 320]
@@ -188,7 +188,8 @@ class mario:
                 now -= 10
                 if now < 0:
                     jum = 0
-                    game_framework.quit()
+                    game_framework.change_state(title)
+                    print('die')
         else:
             if low_jump == 1:
                 self.superframe = 3
@@ -309,7 +310,8 @@ class mario:
             now -= 10
             if now < ground:
                 jum = 0
-                game_framework.quit()
+                game_framework.change_state(title)
+                print('die')
         
             
         
@@ -344,7 +346,7 @@ class monster_1:
             self.move +=3
 
     def turn_move(self):
-        print('turn', self.right)
+        #print('turn', self.right)
         self.right *= -1
         self.move = 0
 
@@ -412,7 +414,7 @@ class monster_2:
             self.move +=3
 
     def turn_move(self):
-        print('turn', self.right)
+        #print('turn', self.right)
         self.right *= -1
         self.move = 0
 
@@ -687,6 +689,23 @@ class fire:               #오류있음
         return self.x - 20, self.y - 30, self.x + 20, self.y + 20
 
 
+class flag:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+        self.image = load_image('flag.png')
+
+    def draw(self):
+        self.image.draw(self.x, self.y)
+        draw_rectangle(*self.get_bb())
+
+    def update(self):
+        if right == 3 and camera_move < moving:
+            self.x = self.x - speed
+
+    def get_bb(self):
+        return self.x - 60, self.y - 340, self.x + 40, self.y + 350
+
+
 def handle_events():
     global running
     global dir
@@ -714,7 +733,7 @@ def handle_events():
             elif event.key == SDLK_ESCAPE:
                 game_framework.quit()
             elif event.key == SDLK_SPACE:
-                print(800+moving)
+                pass
 
         elif event.type == SDL_KEYDOWN and mario_die == 1:
             if event.key == SDLK_ESCAPE:
@@ -731,7 +750,7 @@ def handle_events():
 
 def enter():
     global sky, Mario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change, move, moving
-    global can_move2, jumping, out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12, out13, out14, out15, out16 , boxs1, pad_2
+    global can_move2, jumping, out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12, out13, out14, out15, out16 , boxs1, pad_2, box2, boxs3, clear
     right = 3
     superright = 0
     state = 0
@@ -750,16 +769,17 @@ def enter():
     point = 0
     mush_1 = monster_1(1700, 80)
     flower_1 = item_1(8000, 80)
-    star_1 = item_2(3000, 80)
+    star_1 = item_2(2000, 80)
     turtle_1 = monster_2(5000,80)
     #ghost_1 = monster_3(3000,200)
     pad_1 = pad(8600,80)
-    pad_2 = pad(9600, 80)
+    pad_2 = pad(9300, 80)
     Fire = fire()
     Coin = [coin((i+3)*200, 200) for i in range(4)]
     box1 = box(3400, 150, 2)
-    boxs1 = [box(5500+ i*50, 200, 1) for i in range(8)]
-
+    boxs1 = [box(5500+ i*50, 150, 1) for i in range(8)]
+    boxs3 = [box(6000+ i*50, 300, 1) for i in range(5)]
+    box2 = box(5950, 300, 2)
     out1 = 1400
     out2 = 1550
     out3 = 3160
@@ -777,7 +797,7 @@ def enter():
     out15 = 9420
     out16 = 9820
 
-    
+    clear = flag(11500, 380)
     Mario = mario()
     sky = Sky()
     attack = 0
@@ -806,12 +826,16 @@ def exit():
 def update():
     
     global sky, Mario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change, move, moving
-    global can_move2, jumping, mario_die, out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12, out13, out14, out15, out16 , boxs1, pad_2
+    global can_move2, jumping, mario_die, out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12, out13, out14, out15, out16 , boxs1, pad_2, box2, boxs3
     ground = 90
     if now == 0:
         mario_die = 1
         low_jump = 1
         Mario.die()
+    if collide(Mario, clear):
+        state = 1
+        game_framework.change_state(title)
+        print('1 stage clear')
     #if 1400 - moving <= x <= 1550 or 3160 <= x <= 3300 or 3880 <= x <= 4020 or 4220 <= x <= 4350 or 4540 <= x <= 4670 or 4840 <= x <= 4970 or 8710 <= x <= 9200 or 9420 <= x <= 9820:
     #    ground = 0  
     if out1 <= x <= out2 or out3 <= x <= out4 or out5 <= x <= out6 or out7 <= x <= out8 or out9 <= x <= out10 or out11 <= x <= out12 or out13 <= x <= out14 or out15 <= x <= out16:
@@ -850,7 +874,17 @@ def update():
     if now > box1.obj_y() and leftandright(Mario, box1):
         ground = box1.obj_y() + 30
 
-    print(ground)
+
+    if leftright(Mario, box2) == False and now < box2.obj_y() + 40 and now + 75 >  box2.obj_y() - 20:
+        x += 5
+        can_move2 = 0
+    if rightleft(Mario, box2) == False and now < box2.obj_y() + 40 and now + 75 >  box2.obj_y() - 20:  
+        x -= 5
+        can_move2 = 0 
+    
+    if now > box2.obj_y() and leftandright(Mario, box2):
+        ground = box2.obj_y() + 30
+
         
     for boxs2 in boxs1:
         if leftright(Mario, boxs2) == False and now < boxs2.obj_y() + 40 and now + 75 >  boxs2.obj_y() - 20:
@@ -864,6 +898,17 @@ def update():
             ground = boxs2.obj_y() + 30
 
 
+    for boxs4 in boxs3:
+        if leftright(Mario, boxs4) == False and now < boxs4.obj_y() + 40 and now + 75 >  boxs4.obj_y() - 20:
+            x += 5
+            can_move2 = 0
+        if rightleft(Mario, boxs4) == False and now < boxs4.obj_y() + 40 and now + 75 >  boxs4.obj_y() - 20:  
+            x -= 5
+            can_move2 = 0 
+    
+        if now > boxs4.obj_y() and leftandright(Mario, boxs4):
+            ground = boxs4.obj_y() + 30
+
     #grass.draw(400, 30)
     #grass.draw(1200,30)
     #ghost_1.update(200,x,now,right)
@@ -871,11 +916,15 @@ def update():
     mush_1.update(200)
     turtle_1.update(300)
     box1.update(x, now)
+    box2.update(x, now)
     for boxs2 in boxs1:
         boxs2.update(x, now)
+
+    for boxs4 in boxs3:
+        boxs4.update(x, now)
     
     Mario.update()
-
+    clear.update()
     if hyper > 0:
         hyper -= 1
     
@@ -898,13 +947,16 @@ def draw():
     #ghost_1.draw(x,now)
     pad_1.draw(x, now)
     pad_2.draw(x, now)
+    box2.draw(x, now)
     for boxs2 in boxs1:
         boxs2.draw(x, now)
+    for boxs4 in boxs3:
+        boxs4.draw(x, now)
     Mario.draw()
     #boxs1.draw(x, now)
     Fire.draw()
 
-    
+    clear.draw()    
     for game_object in game_world.all_objects():
         game_object.draw(x, now)
     if attack == 1:
