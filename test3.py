@@ -15,7 +15,7 @@ frame = 0
 dir = 0
 y = 0   #점프높이
 ground = 90 #땅
-now = y+ground
+now = 90
 jump  = 0  #점프
 jum = 0  #점프후 내려오기
 mario_die = 0  #주인공 죽음
@@ -71,8 +71,8 @@ class pad:
         global ground
         global highjump
         highjump = 1
+        
         ground += 40 
-        y = 0
 
     def get_bb(self):
         return self.x - 20, self.y - 30, self.x + 20, self.y + 20
@@ -153,18 +153,18 @@ class mario:
         self.superframe = 0
     def draw(self):
         if mario_die == 1:
-            self.img3.draw(x, ground + y)
+            self.img3.draw(x, now)
         elif state == 0:
-            self.img.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
+            self.img.clip_draw(frame * 75, 75 * right, 75, 75, x, now)
         elif state == 1:
-            self.img4.clip_draw(frame * 75, 75 * right, 75, 75, x, ground + y)
+            self.img4.clip_draw(frame * 75, 75 * right, 75, 75, x, now)
         elif state == 2:
-            self.img2.clip_draw(self.superframe * 75, 75 * superright, 75, 75, x, ground + y -5)
+            self.img2.clip_draw(self.superframe * 75, 75 * superright, 75, 75, x, now -5)
         draw_rectangle(*self.get_bb())
 
 
     def update(self):
-        global low_jump, y, low_jump_y, jum, running, frame, highjump, jump, can_move, right, state, superright, x, next, moving, camera_move, superright, Delay, jumping
+        global low_jump, now, low_jump_y, jum, running, frame, highjump, jump, can_move, right, state, superright, x, next, moving, camera_move, superright, Delay, jumping, now
         if right == 3:
             superright = 0
         else:
@@ -172,7 +172,7 @@ class mario:
         if mario_die == 1:
             Delay = 0.05
             if low_jump == 1:
-                y += 10
+                now += 10
                 low_jump_y += 10
             
             if low_jump_y == 70:
@@ -180,8 +180,8 @@ class mario:
                 low_jump = 0
                 low_jump_y = 0
             elif jum == 1:
-                y -= 10
-                if y <= -90:
+                now -= 10
+                if now < 0:
                     jum = 0
                     game_framework.quit()
         else:
@@ -193,10 +193,11 @@ class mario:
                     frame = 3
                 if can_move == 1:
                     self.superframe = 3
-                    y += 10
-                    jumping += 10
-                    if jumping == 70:
+                    now += 10
+                    low_jump_y += 10
+                    if now >= 120 + ground:
                         jum = 1
+                        jumping += low_jump_y 
                         low_jump = 0
                         low_jump_y = 0
             elif highjump == 1:
@@ -206,27 +207,28 @@ class mario:
                 else:
                     frame = 3
                 if can_move == 1:
-                    y += 15
+                    now += 15
                     jumping += 15
-                    if jumping == 360:
+                    if now >= 400 + ground:
                         jum = 1
                         highjump = 0
                         low_jump_y = 0
             elif jum == 1:
                 self.superframe = 3
-                y -= 10
+                now -= 10
                 jumping -= 10
                 if right == 3:
                     frame = 6
                 else:
                     frame = 3
                 if can_move == 1:
-                    if jumping == 0:
+                    if now == ground:
                         jum = 0
-        
+                        jump = 0
+            
             elif jump == 1:
                 self.superframe = 3
-                y += 10
+                now += 10
                 jumping += 10
                 if right == 3:
                     frame = 6
@@ -236,7 +238,21 @@ class mario:
                     if jumping == 200:
                         jum = 1
                         jump = 0
+                        jumping = 0
             
+            elif now >= ground:
+                self.superframe = 3
+                now -= 10
+                jumping -= 10
+                if right == 3:
+                    frame = 6
+                else:
+                    frame = 3
+                if can_move == 1:
+                    if now == ground:
+                        jum = 0
+                        jump = 0
+
             else:
                 if state == 2:
                     if superright == 1:
@@ -706,7 +722,7 @@ def enter():
     dir = 0
     y = 0   #점프높이
     ground = 90 #땅
-    now = y+ground
+    now = 90
     jump  = 0  #점프
     jum = 0  #점프후 내려오기
     mario_die = 0  #주인공 죽음
@@ -719,7 +735,7 @@ def enter():
     pad_1 = pad(900,80)
     Fire = fire()
     Coin = [coin((i+3)*200, 200) for i in range(4)]
-    box1 = box(400, 200, 2)
+    box1 = box(400, 100, 2)
     Mario = mario()
     sky = Sky()
     attack = 0
@@ -754,27 +770,30 @@ def update():
         mush_1.turn_move()
     if collide(Mario, flower_1):
         state = 1
-    if leftright(Mario, pad_1) == False and ground + y < pad_1.obj_y():
+    if leftright(Mario, pad_1) == False and now < pad_1.obj_y():
         x += 5
         can_move2 = 0
-    if rightleft(Mario, pad_1) == False and ground + y < pad_1.obj_y():
+    if rightleft(Mario, pad_1) == False and now < pad_1.obj_y():
         x -= 5
         can_move2 = 0    
     if downup(Mario, pad_1) and leftandright(Mario, pad_1) :
         pad_1.height()
 
-    if leftright(Mario, box1) == False and ground + y < box1.obj_y() and ground + y + 75 >  box1.obj_y() - 20:
+    if leftright(Mario, box1) == False and now < box1.obj_y() and now + 75 >  box1.obj_y() - 20:
         print ('helolo')
         x += 5
         can_move2 = 0
-    if rightleft(Mario, box1) == False and ground + y < box1.obj_y() and ground + y + 75 >  box1.obj_y() - 20:
+    if rightleft(Mario, box1) == False and now < box1.obj_y() and now + 75 >  box1.obj_y() - 20:
         print ('helolo')
         x -= 5
         can_move2 = 0 
     
-    
+    if now > box1.obj_y() and leftandright(Mario, box1):
+        ground = box1.obj_y() + 30
+        print( box1.obj_y())
+
         
-    now = y+ground
+    
     #grass.draw(400, 30)
     #grass.draw(1200,30)
     #ghost_1.update(200,x,now,right)
