@@ -614,9 +614,7 @@ class coin:
 
     def get_bb(self):
         return self.x - 15, self.y - 15, self.x + 15, self.y + 15
-
-
-            
+       
 
 class box:
     def __init__(self, x, y, status):
