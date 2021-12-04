@@ -533,9 +533,13 @@ class monster_3:
                 self.image.clip_draw(0, 0, 38, 38, self.x, self.y)
 
         draw_rectangle(*self.get_bb())
+        draw_rectangle(*self.arrow())
 
     def get_bb(self):
         return self.x - 20, self.y - 20, self.x + 20, self.y + 20
+
+    def arrow(self):
+        return self.x - 60, self.y - 60, self.x + 60, self.y + 60
 
 
 class item_1:
@@ -836,8 +840,7 @@ def update():
         state = 1
         game_framework.change_state(title)
         print('1 stage clear')
-    #if 1400 - moving <= x <= 1550 or 3160 <= x <= 3300 or 3880 <= x <= 4020 or 4220 <= x <= 4350 or 4540 <= x <= 4670 or 4840 <= x <= 4970 or 8710 <= x <= 9200 or 9420 <= x <= 9820:
-    #    ground = 0  
+    
     if out1 <= x <= out2 or out3 <= x <= out4 or out5 <= x <= out6 or out7 <= x <= out8 or out9 <= x <= out10 or out11 <= x <= out12 or out13 <= x <= out14 or out15 <= x <= out16:
         ground = 0
     if right == 3 and camera_move < moving:
