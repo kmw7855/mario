@@ -292,6 +292,9 @@ class mario:
                 x += dir * speed
             elif move == 1: 
                 moving += speed
+            elif x < 0:
+                x = 0
+                
        
 
     def die(self):
