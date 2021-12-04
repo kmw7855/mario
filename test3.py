@@ -288,13 +288,13 @@ class mario:
         if can_move2 == 1:
             if right == 1:
                 x += dir * speed
-            elif x < 800:
+            elif 0 < x < 800:
                 x += dir * speed
             elif move == 1: 
                 moving += speed
             elif x < 0:
                 x = 0
-                
+
        
 
     def die(self):
