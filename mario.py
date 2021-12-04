@@ -138,8 +138,7 @@ class monster_3:
         self.mario = 0
         global jum
     def update(self, range,mario_x, mario_y, arrow):
-        #if right == 3 and camera_move < moving:
-            self.x = self.x - 5
+        self.x = self.x - moving
         
         if arrow == 3:
             self.mario = 1
