@@ -270,7 +270,6 @@ class pad:
         global ground
         global y
         if self.x - 35 <= mario_x <= self.x + 35: 
-        #and self.y <= mario_y <= self.y + 70:
             ground = 130
             
 
@@ -385,7 +384,6 @@ def handle_events():
 
 
 open_canvas(1600, 1024)
-#grass = load_image('grass.png')
 def enter():
     sky = load_image('cloud.jpg')
     character = load_image('mario.png')
