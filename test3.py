@@ -650,7 +650,7 @@ class box:
         return self.y + 30
 
 
-class fire:               #오류있음
+#class fire:               #오류있음
     def __init__(self):
         self.x, self.y = 0, 0
         self.image = load_image('fire.png')
