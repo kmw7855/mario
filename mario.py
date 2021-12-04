@@ -410,7 +410,7 @@ def enter():
     flower_1 = item_1(1000, 80)
     star_1 = item_2(1400, 80)
     turtle_1 = monster_2(1200,80)
-    ghost_1 = monster_3(-2100,200)
+    ghost_1 = monster_3(300,200)
     pad_1 = pad(900,80)
     Fire = fire()
     Coin = [coin((i+3)*200, 200) for i in range(4)]
@@ -484,6 +484,7 @@ while running:
     Fire.update(stop_attack)
     mush_1.update(500)
     turtle_1.update(300)
+    ghost_1.update(200,x,now)
     box1.update(x, now)
     pad_1.height(x, now)
     box1.height(x,now)
