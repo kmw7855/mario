@@ -295,10 +295,10 @@ class mario:
                 x += dir * speed
             elif 0 < x < 800:
                 x += dir * speed
+           
             elif move == 1: 
                 moving += speed
-            elif x < 0:
-                x = 0
+            
 
        
 
@@ -838,12 +838,13 @@ def update():
     global sky, Mario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change, move, moving
     global can_move2, jumping, mario_die, out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12, out13, out14, out15, out16 , boxs1, pad_2, box2, boxs3
     global secs, tm, sec, limit_time
-    secs = time.time()
-    tm = time.localtime(secs)
-    sec = tm.tm_sec
     if sec != tm.tm_sec:
         limit_time -= 1
         print(limit_time)
+    secs = time.time()
+    tm = time.localtime(secs)
+    sec = tm.tm_sec
+    
     
     
     ground = 90
