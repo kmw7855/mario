@@ -3,8 +3,9 @@ import game_framework
 #from pad import *
 import game_world
 import title
+import time
 speed = 20
-time = 0
+
 
 ground_height = [[90] * 320]
 right = 3
@@ -53,8 +54,9 @@ move = 0
 moving = 0
 camera_move = 0
 can_move2 = 1
-
-
+secs = time.time()
+tm = time.localtime(secs)
+sec = tm.tm_sec
 
 class pad:
     def __init__(self, x, y):
@@ -833,8 +835,11 @@ def update():
     
     global sky, Mario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change, move, moving
     global can_move2, jumping, mario_die, out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12, out13, out14, out15, out16 , boxs1, pad_2, box2, boxs3
-    global time
-    time += 0
+    global secs, tm, sec
+    secs = time.time()
+    tm = time.localtime(secs)
+    sec = tm.tm_sec
+    print(sec)
     ground = 90
     if now == 0:
         mario_die = 1
