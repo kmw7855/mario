@@ -61,11 +61,14 @@ limit_time = 300
 
 
 class pad:
+    image = None
     def __init__(self, x, y):
         self.x, self.y = x, y
         self.jump = 0
         self.jum = 0
-        self.image = load_image('pad.png')
+        if pad.image == None:
+            pad.image = load_image('pad.png')
+        
     def draw(self,mario_x, mario_y):
         if right == 3 and camera_move < moving:
             self.x = self.x - speed
@@ -89,11 +92,14 @@ class pad:
     def obj_y(self):
         return self.y + 20
 class Sky:
+    image = None
     def __init__(self):
-        self.img = load_image('map1.png')
+        if Sky.image == None:
+            Sky.image = load_image('map1.png')
+        
 
     def draw(self):
-        self.img.clip_draw(0 + moving,0 ,1600, 1024, 800,512)
+        self.image.clip_draw(0 + moving,0 ,1600, 1024, 800,512)
 
 
 def collide(a, b):
@@ -295,7 +301,7 @@ class mario:
                 x += dir * speed
             elif 0 < x < 800:
                 x += dir * speed
-           
+            
             elif move == 1: 
                 moving += speed
             
@@ -329,10 +335,12 @@ class mario:
 
         
 class monster_1:
+    image = None
     def __init__(self, x, y):
         self.x, self.y = x, y
         self.point = self.x
-        self.image = load_image('monster1.png')
+        if monster_1.image == None:
+            monster_1.image = load_image('monster1.png')
         self.move = 0
         self.turn = 0
         self.die = 1
@@ -397,9 +405,11 @@ class monster_1:
         return self.x - 20, self.y - 30, self.x + 20, self.y + 20
 
 class monster_2:
+    image = None
     def __init__(self, x, y):
         self.x, self.y = x, y
-        self.image = load_image('monster2.png')
+        if monster_2.image == None:
+            monster_2.image = load_image('monster2.png')
         self.move = 0
         self.turn = 0
         self.die = 1
@@ -463,9 +473,11 @@ class monster_2:
         return self.x - 20, self.y - 20, self.x + 20, self.y + 20
 
 class monster_3:
+    image = None
     def __init__(self, x, y):
         self.x, self.y = x, y
-        self.image = load_image('ghost.png')
+        if monster_3.image == None:
+            monster_3.image = load_image('ghost.png')
         self.move = 0
         self.turn = 0
         self.die = 1
@@ -551,9 +563,11 @@ class monster_3:
 
 
 class item_1:
+    image = None
     def __init__(self, x, y):
         self.x, self.y = x, y
-        self.image = load_image('item1.png')
+        if item_1.image == None:
+            item_1.image = load_image('item1.png')
         self.die = 0
     def draw(self,mario_x, mario_y):
         global state
@@ -574,9 +588,11 @@ class item_1:
         return self.x - 20, self.y - 30, self.x + 20, self.y + 20    
 
 class item_2:
+    image = None
     def __init__(self, x, y):
         self.x, self.y = x, y
-        self.image = load_image('item2.png')
+        if item_2.image == None:
+            item_2.image = load_image('item2.png')
         self.die = 0
     def draw(self,mario_x, mario_y):
         global state
@@ -599,9 +615,11 @@ class item_2:
         return self.x - 20, self.y - 20, self.x + 20, self.y + 20
 
 class coin:
+    image = None
     def __init__(self, x, y):
         self.x, self.y = x, y
-        self.image = load_image('coin.png')
+        if coin.image == None:
+            coin.image = load_image('coin.png')
         self.die = 0
     def draw(self,mario_x, mario_y):
         global state
@@ -622,11 +640,15 @@ class coin:
        
 
 class box:
+    image1 = None
+    image2 = None
     def __init__(self, x, y, status):
         self.x, self.y = x, y
         self.status = status
-        self.image1 = load_image('box1.png')
-        self.image2 = load_image('box2.png')
+        if box.image1 == None:
+            box.image1 = load_image('box1.png')
+        if box.image2 == None:
+            box.image2 = load_image('box2.png')
     def draw(self,mario_x, mario_y):
         if right == 3 and camera_move < moving:
             self.x = self.x - speed
@@ -655,10 +677,12 @@ class box:
         return self.y + 30
 
 
-class fire:               #오류있음
+class fire:
+    image = None               #오류있음
     def __init__(self):
         self.x, self.y = 0, 0
-        self.image = load_image('fire.png')
+        if fire.image == None:
+            fire.image = load_image('fire.png')
         self.die = 0
         self.range = 0
         self.attack = 0
@@ -700,9 +724,11 @@ class fire:               #오류있음
 
 
 class flag:
+    image = None
     def __init__(self, x, y):
         self.x, self.y = x, y
-        self.image = load_image('flag.png')
+        if flag.image == None:
+            flag.image = load_image('flag.png')
 
     def draw(self):
         self.image.draw(self.x, self.y)
