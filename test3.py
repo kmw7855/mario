@@ -650,7 +650,7 @@ class box:
         return self.y + 30
 
 
-#class fire:               #오류있음
+class fire:               #오류있음
     def __init__(self):
         self.x, self.y = 0, 0
         self.image = load_image('fire.png')
@@ -781,7 +781,7 @@ def enter():
     pad_2 = pad(9300, 80)
     Fire = fire()
     Coin = [coin((i+3)*200, 200) for i in range(4)]
-    box1 = box(3400, 150, 2)
+    box1 = box(3000, 150, 2)
     boxs1 = [box(5500+ i*50, 150, 1) for i in range(8)]
     boxs3 = [box(6000+ i*50, 300, 1) for i in range(5)]
     box2 = box(5950, 300, 2)
