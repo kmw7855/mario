@@ -6,12 +6,13 @@ import title
 name = "StartState"
 image = None
 logo_time = 0.0
-
+logo_music = None
 
 def enter():
-    global image
+    global image, logo_music
     image = load_image('kpu.png')
-
+    logo_music = load_wav('logo.wav')
+    logo_music.set_volume(12)
 
 
 def exit():
@@ -21,8 +22,9 @@ def exit():
 
 
 def update():
-    global logo_time
-    if (logo_time > 1.0):
+    global logo_time, logo_music
+    logo_music.play(1)
+    if (logo_time > 3):
         logo_time = 0
         #game_framework.quit()
         game_framework.change_state(title)
