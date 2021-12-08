@@ -98,7 +98,7 @@ class Sky:
     image = None
     def __init__(self):
         if Sky.image == None:
-            Sky.image = load_image('map1.png')
+            Sky.image = load_image('map2.png')
         
 
     def draw(self):
@@ -838,7 +838,7 @@ def enter():
     coin_bgm.set_volume(32)
     die_bgm = load_music('gameover.mp3')
     die_bgm.set_volume(64)
-    map1_bgm = load_music('map1.mp3')
+    map1_bgm = load_music('map2.mp3')
     map1_bgm.set_volume(32)
     
     map1_bgm.repeat_play()
