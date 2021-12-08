@@ -308,7 +308,7 @@ class mario:
         if can_move2 == 1:
             if right == 1:
                 x += dir * speed
-            elif 0 < x < 800:
+            elif  x < 800:
                 x += dir * speed
             
             elif move == 1: 
@@ -809,7 +809,7 @@ def enter():
     star_1 = item_2(2000, 80)
     turtle_1 = monster_2(5000,80)
     #ghost_1 = monster_3(3000,200)
-    pad_1 = pad(8600,80)
+    pad_1 = pad(800,80)
     pad_2 = pad(9300, 80)
     Coin = [coin((i+3)*200, 200) for i in range(4)]
     for money in Coin:
@@ -896,10 +896,10 @@ def update():
     if collide(Mario, flower_1):
         state = 1
     if leftright(Mario, pad_1) == False and now < pad_1.obj_y():
-        x += 5
+        x += speed * 1
         can_move2 = 0
     if rightleft(Mario, pad_1) == False and now < pad_1.obj_y():
-        x -= 5
+        x -= speed * 1
         can_move2 = 0    
     if downup(Mario, pad_1) and leftandright(Mario, pad_1) :
         pad_1.height()
