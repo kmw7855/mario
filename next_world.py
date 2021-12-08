@@ -1,45 +1,51 @@
-import title
+import test3
 from pico2d import *
 import game_framework
 
 Game_over = None
 over = None
 image = None
-wait_time =0
+next_time = 0.0
 
 class game_over:
     def __init__(self):
         self.font = load_font('mario.ttf', 150)
 
     def draw(self):
-        self.font.draw(500, 512, 'Game Over', (255, 255, 255))
+        if game_framework.stage == 1:
+            self.font.draw(700, 512, '1 - 1', (255, 255, 255))
+        if game_framework.stage == 2:
+            self.font.draw(700, 512, '1 - 2', (255, 255, 255))
+        if game_framework.stage == 3:
+            self.font.draw(700, 512, '1 - 3', (255, 255, 255))
 
 
 
 
 def enter():
-    global Game_over,image, wait_time
+    global Game_over,image , next_time
     Game_over = game_over()
+    #next_time = 0.0
     image = load_image('gameover.png')
-    wait_time =0
+    pass
 
 
 
 def exit():
-    global Game_over, image
+    global Game_over, image, next_time
     del(Game_over)
     del(image)
+    #del(next_time)
 
 
 def update():
-    global wait_time
-    if (wait_time > 1.0):
-        wait_time = 0
+    global next_time
+    if (next_time > 1.0):
+        next_time = 0
         #game_framework.quit()
-        game_framework.change_state(title)
-        game_framework.stage = 1
+        game_framework.change_state(test3)
     delay(0.01)
-    wait_time += 0.01
+    next_time += 0.05
 
 def draw():
     global Game_over, image
@@ -57,7 +63,7 @@ def handle_events():
         if event.type == SDL_QUIT:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
-            game_framework.change_state(title)
+            pass
 
 def pause(): pass
 

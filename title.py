@@ -1,32 +1,34 @@
 import game_framework
 from pico2d import *
-import test3
+import next_world
 
 
 name = "TitleState"
 image = None
 image2 = None
+title_bgm = None
 
 
 def enter():
     global image, image2
     image = load_image('title.png')
     image2 = load_image('space.png')
-
-
+    title_bgm = load_music('start.mp3')
+    title_bgm.set_volume(64)
+    title_bgm.repeat_play()
 
 def exit():
-    global image, image2
+    global image, image2, wait_time
     del(image)
     del(image2)
-
+    #del(wait_time)
 
 
 def update():
     pass
 
 def draw():
-    global image, image2
+    global image, image2 
     clear_canvas()
     image.draw(800, 512)
     image2.draw(800, 312)
@@ -41,7 +43,9 @@ def handle_events():
         if event.type == SDL_QUIT:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
-            game_framework.change_state(test3)
+            game_framework.change_state(next_world)
+            game_framework.stage = 1
+            
 
 def pause(): pass
 

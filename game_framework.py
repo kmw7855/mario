@@ -1,6 +1,8 @@
 import time
 
 
+stage = 1
+
 class GameState:
     def __init__(self, state):
         self.enter = state.enter
