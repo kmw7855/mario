@@ -3,32 +3,42 @@ from pico2d import *
 import game_framework
 
 Game_over = None
+over = None
+image = None
+
 
 class game_over:
     def __init__(self):
-        game_over.font = load_font('mario.ttf', 90)
+        self.font = load_font('mario.ttf', 150)
+
     def draw(self):
-        self.font.draw(600, 512, 'Game Over', (0, 152, 0))
+        self.font.draw(500, 512, 'Game Over', (255, 255, 255))
+
+
+
 
 def enter():
+    global Game_over,image 
     Game_over = game_over()
+    image = load_image('gameover.png')
     pass
 
 
 
 def exit():
-    global Game_over
+    global Game_over, image
     del(Game_over)
-
+    del(image)
 
 
 def update():
     pass
 
 def draw():
-    global Game_over
+    global Game_over, image
     clear_canvas()
     Game_over.draw()
+    image.draw()
     update_canvas()
 
 
