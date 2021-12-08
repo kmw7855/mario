@@ -59,6 +59,7 @@ tm = time.localtime(secs)
 sec = tm.tm_sec
 limit_time = 300
 map1_bgm = None
+die_bgm = None
 
 class pad:
     image = None
@@ -167,8 +168,8 @@ class mario:
         self.img4 = load_image('supermario3.png')
         self.superframe = 0
         self.start_time = get_time()
-        self.die_bgm = load_music('gameover.mp3')
-        self.die_bgm.set_volume(32)
+        
+        
         mario.font = load_font('ENCR10B.TTF', 30)
     def draw(self):
         if mario_die == 1:
@@ -194,7 +195,6 @@ class mario:
         else:
             superright = 1
         if mario_die == 1:
-            self.die_bgm.play(1)
             Delay = 0.05
             if low_jump == 1:
                 now += 10
@@ -316,13 +316,14 @@ class mario:
             
     def fire_attack(self):
         global attack_state
+        print('fire')
         Fire = fire(x, now, right)
-        game_world.add_object(Fire, 1)
+        game_world.add_object(Fire, 0)
         attack_state = 0
 
     def die(self):
         global low_jump, now, low_jump_y, jum
-        self.die_bgm.play(1)
+        #self.die_bgm.play(1)
         Delay = 0.05
         self.img3.draw(x, now)
         if low_jump == 1:
@@ -380,7 +381,7 @@ class monster_1:
         self.move = 0
 
     def draw(self, mario_x, mario_y):
-        global mario_die, state, point, stop_attack, low_jump, hyper
+        global mario_die, state, point, stop_attack, low_jump, hyper, die_bgm
         if mario_die == 0:
             if self.die == 1 and jum == 1 and  mario_y == self.height + self.y and self.x -self.side <= mario_x < self.x + self.side:
                 self.die = 0
@@ -390,7 +391,8 @@ class monster_1:
                 if state == 1:
                     state = 0
                     hyper = 50
-                else:    
+                else:
+                      
                     mario_die = 1  
                     low_jump = 1       
             elif self.die ==1 and hyper == 0 and jum == 1 and mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
@@ -399,6 +401,7 @@ class monster_1:
                     hyper = 50
                 else:    
                     mario_die = 1
+                     
                     low_jump = 1
             elif attack_state == 2 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
                 self.die = 0
@@ -682,7 +685,7 @@ class box:
     def get_bb(self):
         return self.x - 25, self.y - 25, self.x + 25, self.y + 25
     def obj_y(self):
-        return self.y + 30
+        return self.y +30
 
 
 class fire:
@@ -705,7 +708,6 @@ class fire:
         self.range += 20
 
         if self.range == 300:
-            
             game_world.remove_object(self)
 
     def draw(self):
@@ -783,10 +785,13 @@ def enter():
     
     global sky, Mario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change, move, moving
     global can_move2, jumping, out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12, out13, out14, out15, out16 , boxs1, pad_2, box2, boxs3, clear
-    global map1_bgm
+    global map1_bgm, die_bgm
     map1_bgm = load_music('map1.mp3')
     map1_bgm.set_volume(32)
-    map1_bgm.repeat_play()
+    die_bgm = load_music('gameover.mp3')
+    die_bgm.set_volume(32)
+    die_bgm.play()
+    #map1_bgm.repeat_play()
     right = 3
     superright = 0
     state = 0
@@ -809,7 +814,7 @@ def enter():
     star_1 = item_2(2000, 80)
     turtle_1 = monster_2(5000,80)
     #ghost_1 = monster_3(3000,200)
-    pad_1 = pad(800,80)
+    pad_1 = pad(8600,80)
     pad_2 = pad(9300, 80)
     Coin = [coin((i+3)*200, 200) for i in range(4)]
     for money in Coin:
@@ -905,30 +910,30 @@ def update():
         pad_1.height()
 
     if leftright(Mario, pad_2) == False and now < pad_2.obj_y():
-        x += 5
+        x += speed * 1
         can_move2 = 0
     if rightleft(Mario, pad_2) == False and now < pad_2.obj_y():
-        x -= 5
+        x -= speed * 1
         can_move2 = 0    
     if downup(Mario, pad_2) and leftandright(Mario, pad_2) :
         pad_2.height()
 
-    if leftright(Mario, box1) == False and now < box1.obj_y() + 40 and now + 75 >  box1.obj_y() - 20:
-        x += 5
+    if leftright(Mario, box1) == False and now < box1.obj_y() + 40 and now + 75 >  box1.obj_y() - 100:
+        x += speed * 1
         can_move2 = 0
-    if rightleft(Mario, box1) == False and now < box1.obj_y() + 40 and now + 75 >  box1.obj_y() - 20:  
-        x -= 5
+    if rightleft(Mario, box1) == False and now < box1.obj_y() + 40 and now + 75 >  box1.obj_y() - 100:  
+        x -= speed * 1
         can_move2 = 0 
     
     if now > box1.obj_y() and leftandright(Mario, box1):
         ground = box1.obj_y() + 30
 
 
-    if leftright(Mario, box2) == False and now < box2.obj_y() + 40 and now + 75 >  box2.obj_y() - 20:
-        x += 5
+    if leftright(Mario, box2) == False and now < box2.obj_y() + 40 and now + 75 >  box2.obj_y() - 100:
+        x += speed * 1
         can_move2 = 0
-    if rightleft(Mario, box2) == False and now < box2.obj_y() + 40 and now + 75 >  box2.obj_y() - 20:  
-        x -= 5
+    if rightleft(Mario, box2) == False and now < box2.obj_y() + 40 and now + 75 >  box2.obj_y() - 100:  
+        x -= speed * 1
         can_move2 = 0 
     
     if now > box2.obj_y() and leftandright(Mario, box2):
@@ -936,11 +941,11 @@ def update():
 
         
     for boxs2 in boxs1:
-        if leftright(Mario, boxs2) == False and now < boxs2.obj_y() + 40 and now + 75 >  boxs2.obj_y() - 20:
-            x += 5
+        if leftright(Mario, boxs2) == False and now < boxs2.obj_y() + 40 and now + 75 >  boxs2.obj_y() - 100:
+            x += speed * 1
             can_move2 = 0
-        if rightleft(Mario, boxs2) == False and now < boxs2.obj_y() + 40 and now + 75 >  boxs2.obj_y() - 20:  
-            x -= 5
+        if rightleft(Mario, boxs2) == False and now < boxs2.obj_y() + 40 and now + 75 >  boxs2.obj_y() - 100:  
+            x -= speed * 1
             can_move2 = 0 
     
         if now > boxs2.obj_y() and leftandright(Mario, boxs2):
@@ -948,11 +953,11 @@ def update():
 
 
     for boxs4 in boxs3:
-        if leftright(Mario, boxs4) == False and now < boxs4.obj_y() + 40 and now + 75 >  boxs4.obj_y() - 20:
-            x += 5
+        if leftright(Mario, boxs4) == False and now < boxs4.obj_y() + 40 and now + 75 >  boxs4.obj_y() - 100:
+            x += speed * 1
             can_move2 = 0
-        if rightleft(Mario, boxs4) == False and now < boxs4.obj_y() + 40 and now + 75 >  boxs4.obj_y() - 20:  
-            x -= 5
+        if rightleft(Mario, boxs4) == False and now < boxs4.obj_y() + 40 and now + 75 >  boxs4.obj_y() - 100:  
+            x -= speed * 1
             can_move2 = 0 
     
         if now > boxs4.obj_y() and leftandright(Mario, boxs4):
