@@ -464,7 +464,7 @@ class monster_2:
         self.right = 1
         self.hp = 2
         global jum
-    def update(self, range):
+    def update(self, range = 200):
         if right == 3 and camera_move < moving:
             self.x = self.x - speed
         if self.move > range:
@@ -906,6 +906,7 @@ def enter():
     print(mario_die, x, now)
 
 def exit():
+    
     global map1_bgm
     game_world.clear()
     map1_bgm.stop()

@@ -5,7 +5,7 @@ import game_world
 import title
 import gameover
 import time
-speed = 5
+speed = 20
 
 ground_height = [[90] * 320]
 right = 3
@@ -84,10 +84,11 @@ class pad:
 
     def height(self):
         global ground
-        global highjump
+        global highjump, jumping
         highjump = 1
         jump_bgm.play()
         ground += 40 
+        jumping = 0
 
     def get_bb(self):
         return self.x - 20, self.y - 20, self.x + 20, self.y + 20
@@ -245,10 +246,14 @@ class mario:
                     frame = 3
                 if can_move == 1:
                     now += 15
+                    jum = 0
                     jumping += 15
                     if jumping == 360:
                         jum = 1
+                        jumping = 0
                         highjump = 0
+                        jump = 0
+                        low_jump = 0
             elif jum == 1:
                 self.superframe = 3
                 now -= 10
@@ -261,6 +266,7 @@ class mario:
                     if now == ground:
                         jum = 0
                         jump = 0
+                        jumping = 0
             
             elif jump == 1:
                 self.superframe = 3
@@ -288,6 +294,7 @@ class mario:
                     if now == ground:
                         jum = 0
                         jump = 0
+                        
 
             else:
                 if state == 2:
@@ -681,7 +688,7 @@ class box:
         draw_rectangle(*self.get_bb())
     def update(self,mario_x, mario_y):
         global jum, high_jump, high_jump_y, jump
-        if self.x - 30 <= mario_x <= self.x + 30 and self.y <= mario_y + 50 <= self.y + 20:
+        if self.x - 40 <= mario_x <= self.x + 40 and self.y <= mario_y + 50 <= self.y + 20:
             jum = 1
             high_jump = 0
             high_jump_y = 0
@@ -805,6 +812,17 @@ def enter():
     global sky, Mario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change, move, moving, clear_state
     global can_move2, jumping, out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12, out13, out14, out15, out16 , boxs1, pad_2, box2, boxs3, clear
     global map1_bgm, die_bgm, time_limit, jump_bgm, clear_bgm, Fire_bgm, monster_bgm, item_bgm, box_bgm, coin_bgm, pad_list, monster_list, box_list
+    for boxs in box_list:
+        del(boxs)
+    for pads in pad_list:
+        del(pads)
+    for monsters in monster_list:
+        del(monsters)
+
+    pad_list = []
+    monster_list = []
+    box_list = []
+
     jump_bgm = load_wav('jump.wav')
     jump_bgm.set_volume(16)
     clear_bgm = load_music('clear.mp3')
@@ -842,17 +860,25 @@ def enter():
     jum = 0  #점프후 내려오기
     mario_die = 0  #주인공 죽음
     point = 0
-    mush_1 = monster_1(1700, 80)
+    mush_1 = monster_1(2000, 80)
     monster_list.append(mush_1)
 
-    flower_1 = item_1(8000, 80)
+    flower_1 = item_1(1700, 80)
     game_world.add_object(flower_1, 0)
-    star_1 = item_2(2000, 80)
+    star_1 = item_2(4400, 80)
     game_world.add_object(star_1, 0)
 
-    turtle_1 = monster_2(5000,80)
+    turtle_1 = monster_2(5500,80)
     monster_list.append(turtle_1)
     
+    turtle_2 = monster_2(6300, 80)
+    monster_list.append(turtle_2)
+
+    turtle_3 = monster_2(5800, 80)
+    monster_list.append(turtle_3)
+
+    turtle_4 = monster_2(7200, 80)
+    monster_list.append(turtle_4)
 
     pad_1 = pad(8600,80)
     pad_2 = pad(9300, 80)
@@ -862,14 +888,24 @@ def enter():
     Coin = [coin((i+3)*200, 200) for i in range(4)]
     for money in Coin:
         game_world.add_object(money, 0)
+    Coin2 = [coin(7400+i*100, 80) for i in range(7)]
+    for money2 in Coin2:
+        game_world.add_object(money2, 0)
+    Coin3 = [coin(10500+i*100, 80) for i in range(7)]
+    for money3 in Coin3:
+        game_world.add_object(money3, 0)
     
-    box1 = box(3000, 150, 1)
+    box1 = box(3250, 150, 1)
     boxs1 = [box(5500+ i*50, 150, 1) for i in range(8)]
     boxs3 = [box(6000+ i*50, 300, 1) for i in range(5)]
     box2 = box(5950, 300, 2)
+    box3 = box(8950, 300, 1)
+    box4 = box(9620, 300, 1)
     box_list = boxs1 + boxs3
     box_list.append(box1)
     box_list.append(box2)
+    box_list.append(box3)
+    box_list.append(box4)
 
     out1 = 1400
     out2 = 1550
@@ -911,9 +947,16 @@ def enter():
     time_limit = 300
     clear_state = 0
     print(mario_die, x, now)
+    speed = 5
 
 def exit():
-    global map1_bgm
+    global map1_bgm, box_list, pad_list, monster_list
+    for boxs in box_list:
+        del(boxs)
+    for pads in pad_list:
+        del(pads)
+    for monsters in monster_list:
+        del(monsters)
     game_world.clear()
     map1_bgm.stop()
     pass
@@ -966,15 +1009,17 @@ def update():
             pads.height()
 
     for boxs in box_list:
-        if leftright(Mario, boxs) == False and now < boxs.obj_y() + 40 and now + 75 >  boxs.obj_y() - 100:
+        if leftright(Mario, boxs) == False and boxs.obj_y() + 25 > now >  boxs.obj_y() - 25:
+            print(boxs.obj_y(), now)
             x += speed * 1
             can_move2 = 0
-        if rightleft(Mario, boxs) == False and now < boxs.obj_y() + 40 and now + 75 >  boxs.obj_y() - 100:  
+        if rightleft(Mario, boxs) == False and boxs.obj_y() + 25 > now >  boxs.obj_y() - 25:
+            print(boxs.obj_y(), now)  
             x -= speed * 1
             can_move2 = 0 
 
         if now > boxs.obj_y() - 20 and leftandright(Mario, boxs):
-            ground = boxs.obj_y() + 30
+            ground = boxs.obj_y() + 40
 
     for game_object in game_world.all_objects():
         for monsters in monster_list:
@@ -1000,6 +1045,7 @@ def update():
 
     Mario.update()
     clear.update()
+    #print(jump, jum, low_jump, highjump, jumping)
     if hyper > 0:
         hyper -= 1
     
