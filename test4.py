@@ -5,7 +5,7 @@ import game_world
 import title
 import gameover
 import time
-speed = 20
+speed = 5
 
 ground_height = [[90] * 320]
 right = 3
@@ -24,18 +24,8 @@ jump  = 0  #점프
 jum = 0  #점프후 내려오기
 mario_die = 0  #주인공 죽음
 point = 0
-mush_1 = None
-flower_1 = None
-star_1 = None
-turtle_1 = None
-ghost_1 = None
-pad_1 = None
-pad_2 = None
-Fire = None
-Coin = None
-box1 = None
-Mario = None
-sky = None
+
+
 #coin1 = None
 attack = 0
 attack_x = 0
@@ -69,6 +59,10 @@ item_bgm = None
 box_bgm = None
 coin_bgm = None
 clear_state = 0
+pad_list = []
+monster_list = []
+box_list = []
+
 class pad:
     image = None
     def __init__(self, x, y):
@@ -78,7 +72,7 @@ class pad:
         if pad.image == None:
             pad.image = load_image('pad.png')
         
-    def draw(self, mario_x, mario_y):
+    def draw(self,mario_x, mario_y):
         if right == 3 and camera_move < moving:
             self.x = self.x - speed
         global ground
@@ -810,7 +804,7 @@ def enter():
     
     global sky, Mario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change, move, moving, clear_state
     global can_move2, jumping, out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12, out13, out14, out15, out16 , boxs1, pad_2, box2, boxs3, clear
-    global map1_bgm, die_bgm, time_limit, jump_bgm, clear_bgm, Fire_bgm, monster_bgm, item_bgm, box_bgm, coin_bgm
+    global map1_bgm, die_bgm, time_limit, jump_bgm, clear_bgm, Fire_bgm, monster_bgm, item_bgm, box_bgm, coin_bgm, pad_list, monster_list, box_list
     jump_bgm = load_wav('jump.wav')
     jump_bgm.set_volume(16)
     clear_bgm = load_music('clear.mp3')
@@ -849,21 +843,34 @@ def enter():
     mario_die = 0  #주인공 죽음
     point = 0
     mush_1 = monster_1(1700, 80)
+    monster_list.append(mush_1)
+
     flower_1 = item_1(8000, 80)
     game_world.add_object(flower_1, 0)
     star_1 = item_2(2000, 80)
+    game_world.add_object(star_1, 0)
+
     turtle_1 = monster_2(5000,80)
-    #ghost_1 = monster_3(3000,200)
+    monster_list.append(turtle_1)
+    
+
     pad_1 = pad(8600,80)
     pad_2 = pad(9300, 80)
+    pad_list.append(pad_1)
+    pad_list.append(pad_2)
+
     Coin = [coin((i+3)*200, 200) for i in range(4)]
     for money in Coin:
         game_world.add_object(money, 0)
     
-    box1 = box(3000, 150, 2)
+    box1 = box(3000, 150, 1)
     boxs1 = [box(5500+ i*50, 150, 1) for i in range(8)]
     boxs3 = [box(6000+ i*50, 300, 1) for i in range(5)]
     box2 = box(5950, 300, 2)
+    box_list = boxs1 + boxs3
+    box_list.append(box1)
+    box_list.append(box2)
+
     out1 = 1400
     out2 = 1550
     out3 = 3160
@@ -919,7 +926,6 @@ def update():
     global can_move2, jumping, mario_die, out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12, out13, out14, out15, out16 , boxs1, pad_2, box2, boxs3
     global secs, tm, sec, limit_time
     
-    
     if mario_die == 0 and limit_time < 0:
         mario_die = 1
         low_jump = 1
@@ -947,76 +953,34 @@ def update():
         mush_1.turn_move()
     if collide(Mario, flower_1):
         state = 1
-    if leftright(Mario, pad_1) == False and now < pad_1.obj_y():
-        x += speed * 1
-        can_move2 = 0
-    if rightleft(Mario, pad_1) == False and now < pad_1.obj_y():
-        x -= speed * 1
-        can_move2 = 0    
-    if downup(Mario, pad_1) and leftandright(Mario, pad_1) :
-        pad_1.height()
 
-    if leftright(Mario, pad_2) == False and now < pad_2.obj_y():
-        x += speed * 1
-        can_move2 = 0
-    if rightleft(Mario, pad_2) == False and now < pad_2.obj_y():
-        x -= speed * 1
-        can_move2 = 0    
-    if downup(Mario, pad_2) and leftandright(Mario, pad_2) :
-        pad_2.height()
-
-    if leftright(Mario, box1) == False and now < box1.obj_y() + 40 and now + 75 >  box1.obj_y() - 100:
-        x += speed * 1
-        can_move2 = 0
-    if rightleft(Mario, box1) == False and now < box1.obj_y() + 40 and now + 75 >  box1.obj_y() - 100:  
-        x -= speed * 1
-        can_move2 = 0 
     
-    if now > box1.obj_y() - 20 and leftandright(Mario, box1):
-        ground = box1.obj_y() + 30
-
-
-    if leftright(Mario, box2) == False and now < box2.obj_y() + 40 and now + 75 >  box2.obj_y() - 100:
-        x += speed * 1
-        can_move2 = 0
-    if rightleft(Mario, box2) == False and now < box2.obj_y() + 40 and now + 75 >  box2.obj_y() - 100:  
-        x -= speed * 1
-        can_move2 = 0 
-    
-    if now > box2.obj_y() and leftandright(Mario, box2):
-        ground = box2.obj_y() + 30
-
-        
-    for boxs2 in boxs1:
-        if leftright(Mario, boxs2) == False and now < boxs2.obj_y() + 40 and now + 75 >  boxs2.obj_y() - 100:
+    for pads in pad_list:
+        if leftright(Mario, pads) == False and now < pads.obj_y():
             x += speed * 1
             can_move2 = 0
-        if rightleft(Mario, boxs2) == False and now < boxs2.obj_y() + 40 and now + 75 >  boxs2.obj_y() - 100:  
+        if rightleft(Mario, pads) == False and now < pads.obj_y():
             x -= speed * 1
-            can_move2 = 0 
-    
-        if now > boxs2.obj_y() and leftandright(Mario, boxs2):
-            ground = boxs2.obj_y() + 30
+            can_move2 = 0    
+        if downup(Mario, pads) and leftandright(Mario, pads) :
+            pads.height()
 
-
-    for boxs4 in boxs3:
-        if leftright(Mario, boxs4) == False and now < boxs4.obj_y() + 40 and now + 75 >  boxs4.obj_y() - 100:
+    for boxs in box_list:
+        if leftright(Mario, boxs) == False and now < boxs.obj_y() + 40 and now + 75 >  boxs.obj_y() - 100:
             x += speed * 1
             can_move2 = 0
-        if rightleft(Mario, boxs4) == False and now < boxs4.obj_y() + 40 and now + 75 >  boxs4.obj_y() - 100:  
+        if rightleft(Mario, boxs) == False and now < boxs.obj_y() + 40 and now + 75 >  boxs.obj_y() - 100:  
             x -= speed * 1
             can_move2 = 0 
-    
-        if now > boxs4.obj_y() and leftandright(Mario, boxs4):
-            ground = boxs4.obj_y() + 30
+
+        if now > boxs.obj_y() - 20 and leftandright(Mario, boxs):
+            ground = boxs.obj_y() + 30
 
     for game_object in game_world.all_objects():
-        if collide(game_object, mush_1):
-            mush_1.monster_die()
-            game_world.remove_object(game_object)
-        if collide(game_object, turtle_1):
-            turtle_1.monster_die()
-            game_world.remove_object(game_object)
+        for monsters in monster_list:
+            if collide(game_object, monsters):
+                monsters.monster_die()
+                game_world.remove_object(game_object)
     #grass.draw(400, 30)
     #grass.draw(1200,30)
     #ghost_1.update(200,x,now,right)
@@ -1024,17 +988,11 @@ def update():
     if attack_state == 2:
         Mario.fire_attack()
 
-    mush_1.update(200)
-    turtle_1.update(300)
-    box1.update(x, now)
-    box2.update(x, now)
-    for boxs2 in boxs1:
-        boxs2.update(x, now)
-
-    for boxs4 in boxs3:
-        boxs4.update(x, now)
+    for boxs in box_list:
+        boxs.update(x, now)
     
-
+    for monsters in monster_list:
+        monsters.update(200)
     
 
     for game_object in game_world.all_objects():
@@ -1056,18 +1014,12 @@ def draw():
     global boxs1
     sky.draw()
     
-    mush_1.draw(x , now)
-    
-    star_1.draw()
-    turtle_1.draw(x, now)
-    #ghost_1.draw(x,now)
-    pad_1.draw(x, now)
-    pad_2.draw(x, now)
-    box2.draw(x, now)
-    for boxs2 in boxs1:
-        boxs2.draw(x, now)
-    for boxs4 in boxs3:
-        boxs4.draw(x, now)
+    for monsters in monster_list:
+        monsters.draw(x, now)
+    for pads in pad_list:
+        pads.draw(x, now)
+    for boxs in box_list:
+        boxs.draw(x, now)
     Mario.draw()
     #boxs1.draw(x, now)
 
