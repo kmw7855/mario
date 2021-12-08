@@ -6,7 +6,7 @@ import title
 import gameover
 import time
 import random
-speed = 5
+speed = 20
 
 right = 3
 superright = 0
@@ -24,7 +24,7 @@ jump  = 0  #점프
 jum = 0  #점프후 내려오기
 mario_die = 0  #주인공 죽음
 point = 0
-
+can_move2 = 1
 
 #coin1 = None
 attack = 0
@@ -47,8 +47,8 @@ can_move2 = 1
 secs = time.time()
 tm = time.localtime(secs)
 sec = tm.tm_sec
-limit_time = 300
-time_limit = 300
+limit_time = 250
+time_limit = 250
 map1_bgm = None
 die_bgm = None
 jump_bgm = None
@@ -58,6 +58,7 @@ monster_bgm = None
 item_bgm = None
 box_bgm = None
 coin_bgm = None
+ghost = None
 clear_state = 0
 pad_list = []
 monster_list = []
@@ -99,7 +100,7 @@ class Sky:
     image = None
     def __init__(self):
         if Sky.image == None:
-            Sky.image = load_image('map1.png')
+            Sky.image = load_image('map2.png')
         
 
     def draw(self):
@@ -528,7 +529,7 @@ class monster_2:
 
 class monster_3:
     image = None
-    def __init__(self, x, y):
+    def __init__(self, x, y,range = 200):
         self.x, self.y = x, y
         if monster_3.image == None:
             monster_3.image = load_image('ghost.png')
@@ -539,31 +540,22 @@ class monster_3:
         self.side = 30
         self.right = 1
         self.mario = 0
+        self.range = range
         global jum
-    def update(self, range):
+    def update(self):
         if right == 3 and camera_move < moving:
             self.x = self.x - speed
-        
+        if self.move > self.range:
+            self.right *= -1
+            self.move = 0
+        if self.right == 1:
+            self.x += 3
+            self.move +=3
+        elif self.right == -1:
+            self.x -= 3
+            self.move +=3
 
     def draw(self, mario_x, mario_y):
-        global mario_die, state, point, stop_attack, low_jump, hyper
-        if mario_die == 0:
-            if self.die ==1 and hyper == 0 and jum == 0 and mario_y < self.height + self.y and self.x -self.side<= mario_x < self.x + self.side:
-                if state == 1:
-                    state = 0
-                    hyper = 50
-                else:    
-                    mario_die = 1
-                    die_bgm.play(1)  
-                    low_jump = 1
-            elif self.die ==1 and jum == 1 and hyper == 0 and mario_y < self.height + self.y - 10 and self.x -self.side<= mario_x < self.x + self.side:
-                if state == 1:
-                    state = 0
-                    hyper = 50
-                else:    
-                    mario_die = 1  
-                    die_bgm.play(1)
-                    low_jump = 1
         if self.die == 1:
             if self.right == 1:
                 self.image.clip_draw(38, 0, 38, 38, self.x, self.y)
@@ -579,8 +571,16 @@ class monster_3:
     def arrow(self):
         return self.x - 60, self.y - 60, self.x + 60, self.y + 60
 
-    def monster_die(self):
-        self.die = 0
+    def mario_kill(self):
+        global mario_die, state, point, stop_attack, low_jump, hyper
+        if hyper == 0:
+            if state == 1:
+                state = 0
+                hyper = 50
+            else:    
+                mario_die = 1
+                die_bgm.play(1)  
+                low_jump = 1
 
 
 class item_1:
@@ -815,7 +815,7 @@ def enter():
     
     global sky, Mario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change, move, moving, clear_state
     global can_move2, jumping, out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12, out13, out14, out15, out16 , boxs1, pad_2, box2, boxs3, clear
-    global map1_bgm, die_bgm, time_limit, jump_bgm, clear_bgm, Fire_bgm, monster_bgm, item_bgm, box_bgm, coin_bgm, pad_list, monster_list, box_list
+    global map1_bgm, die_bgm, time_limit, jump_bgm, clear_bgm, Fire_bgm, monster_bgm, item_bgm, box_bgm, coin_bgm, pad_list, monster_list, box_list, ghost
     for boxs in box_list:
         del(boxs)
     for pads in pad_list:
@@ -843,7 +843,7 @@ def enter():
     coin_bgm.set_volume(32)
     die_bgm = load_music('gameover.mp3')
     die_bgm.set_volume(64)
-    map1_bgm = load_music('map1.mp3')
+    map1_bgm = load_music('map2.mp3')
     map1_bgm.set_volume(32)
     
     map1_bgm.repeat_play()
@@ -864,71 +864,89 @@ def enter():
     jum = 0  #점프후 내려오기
     mario_die = 0  #주인공 죽음
     point = 0
-    mush_1 = monster_1(2000, 80)
-    monster_list.append(mush_1)
+    mush_1 = [monster_1(1800 + i * 150, 80, 100) for i in range(3)]
+    for monsters in mush_1:
+        monster_list.append(monsters)
 
-    flower_1 = item_1(1700, 80)
-    game_world.add_object(flower_1, 0)
-    star_1 = item_2(4400, 80)
+    mush_2 = [monster_1(4500 + i * 600, 340, 10) for i in range(4)]
+    for monsters in mush_2:
+        monster_list.append(monsters)
+
+    #flower_1 = item_1(3800, 500)
+    #game_world.add_object(flower_1, 0)
+    star_1 = item_2(3800, 650)
     game_world.add_object(star_1, 0)
 
-    turtle_1 = monster_2(5500,80)
-    monster_list.append(turtle_1)
+    turtle_1 = [monster_2(2800 + i * 220, 80, 50) for i in range(3)]
+    for monsters in turtle_1:
+        monster_list.append(monsters)
     
-    turtle_2 = monster_2(6300, 80)
-    monster_list.append(turtle_2)
+    turtle_2 = [monster_2(4500 + i * 60, 80, 100) for i in range(7)]
+    for monsters in turtle_2:
+        monster_list.append(monsters)
 
-    turtle_3 = monster_2(5800, 80)
-    monster_list.append(turtle_3)
+    ghost = monster_3(500, 200)
 
-    turtle_4 = monster_2(7200, 80)
-    monster_list.append(turtle_4)
+    
 
-    pad_1 = pad(8600,80)
-    pad_2 = pad(9300, 80)
+    pad_1 = pad(1100,80)
+    pad_2 = pad(2300, 80)
+    pad_3 = pad(3340, 80)
     pad_list.append(pad_1)
     pad_list.append(pad_2)
+    pad_list.append(pad_3)
 
-    Coin = [coin((i+3)*200, 200) for i in range(4)]
+    Coin = [coin(500 + i*50, 200) for i in range(7)]
     for money in Coin:
         game_world.add_object(money, 0)
-    Coin2 = [coin(7400+i*100, 80) for i in range(7)]
+    Coin2 = [coin(6300+i*70, 80) for i in range(20)]
     for money2 in Coin2:
         game_world.add_object(money2, 0)
-    Coin3 = [coin(10500+i*100, 80) for i in range(7)]
+    Coin3 = [coin(3500+ i*200, 350) for i in range(15) if i != 5 and i != 8 and i != 11 and i != 14]
     for money3 in Coin3:
         game_world.add_object(money3, 0)
+    Coin4 = [coin(1800 + i * 150, 150) for i in range(3) ]
+    for money4 in Coin4:
+        game_world.add_object(money4, 0)
     
-    box1 = box(3250, 150, 1)
-    boxs1 = [box(5500+ i*50, 150, 1) for i in range(8)]
-    boxs3 = [box(6000+ i*50, 300, 1) for i in range(5)]
-    box2 = box(5950, 300, 2)
-    box3 = box(8950, 300, 1)
-    box4 = box(9620, 300, 1)
-    box_list = boxs1 + boxs3
+    
+    box1 = box(1300, 300, 1)
+    box2 = box(1430, 400, 1)
+    box3 = box(1560, 300, 1)
+    box4 = box(2400, 350, 1)
+    box5 = box(2600, 200, 1)
+    boxs1 = [box(3500+ i*200, 300, 1) for i in range(15)]
+    box6 = box(3950, 450, 2)
+    #boxs3 = [box(6000+ i*50, 300, 1) for i in range(5)]
+
+    boxs2 = [box(6400+ i*400, 420, 1) for i in range(5)]
+
+    boxs4 = [box(6600+ i*400, 300, 1) for i in range(5)]
+
+    box_list = boxs1 + boxs2 + boxs4
     box_list.append(box1)
     box_list.append(box2)
     box_list.append(box3)
     box_list.append(box4)
+    box_list.append(box5)
+    box_list.append(box6)
+    
 
-    out1 = 1400
-    out2 = 1550
-    out3 = 3160
-    out4 = 3300
-    out5 = 3880
-    out6 = 4020
-    out7 = 4220
-    out8 = 4350
-    out9 = 4540
-    out10 = 4670
-    out11 = 4840
-    out12 = 4970
-    out13 = 8710
-    out14 = 9200
-    out15 = 9420
-    out16 = 9820
+    out1 = 1200
+    out2 = 1690
+    out3 = 2340
+    out4 = 2715
+    out5 = 3360
+    out6 = 4370
+    out7 = 5020
+    out8 = 5995
+    out9 = 7870
+    out10 = 8310
+    out11 = 9080
+    out12 = 9180
+    
 
-    clear = flag(11500, 380)
+    clear = flag(9000, 380)
     Mario = mario()
     sky = Sky()
     attack = 0
@@ -941,7 +959,7 @@ def enter():
     highjump = 0
     highjump_y = 0
     jumping = 0
-    hyper = 0
+    hyper = 3000
     Delay = 0.01
     change = 0
     move = 0
@@ -951,7 +969,6 @@ def enter():
     time_limit = 300
     clear_state = 0
     print(mario_die, x, now)
-    
 
 def exit():
     global map1_bgm, box_list, pad_list, monster_list
@@ -970,8 +987,8 @@ def exit():
 def update():
     
     global sky, Mario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change, move, moving, clear_state
-    global can_move2, jumping, mario_die, out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12, out13, out14, out15, out16 , boxs1, pad_2, box2, boxs3
-    global secs, tm, sec, limit_time
+    global can_move2, jumping, mario_die, out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12, boxs1, pad_2, box2, boxs3
+    global secs, tm, sec, limit_time, can_move2
     
     if mario_die == 0 and limit_time < 0:
         mario_die = 1
@@ -980,6 +997,7 @@ def update():
         die_bgm.play(1)
         Mario.die()
         
+    if collide(Mario, ghost):
 
     ground = 90
     if mario_die == 0 and now == 0:
@@ -992,14 +1010,14 @@ def update():
             clear_map()
             clear_state = 1
     
-    if out1 <= x <= out2 or out3 <= x <= out4 or out5 <= x <= out6 or out7 <= x <= out8 or out9 <= x <= out10 or out11 <= x <= out12 or out13 <= x <= out14 or out15 <= x <= out16:
+    if out1 <= x <= out2 or out3 <= x <= out4 or out5 <= x <= out6 or out7 <= x <= out8 or out9 <= x <= out10 or out11 <= x <= out12:
         ground = 0
     if right == 3 and camera_move < moving:
-        out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12, out13, out14, out15, out16 = out1-speed, out2-speed, out3-speed, out4-speed, out5-speed, out6-speed, out7-speed, out8-speed, out9-speed, out10-speed, out11-speed, out12-speed, out13-speed, out14-speed, out15-speed, out16-speed
-    if collide(mush_1, pad_1):
-        mush_1.turn_move()
-    if collide(Mario, flower_1):
-        state = 1
+        out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12 = out1-speed, out2-speed, out3-speed, out4-speed, out5-speed, out6-speed, out7-speed, out8-speed, out9-speed, out10-speed, out11-speed, out12-speed
+    for pads in pad_list:
+        for monsters in monster_list:
+            if collide(monsters, pads):
+                monsters.turn_move()
 
     
     for pads in pad_list:
@@ -1052,7 +1070,6 @@ def update():
     #print(jump, jum, low_jump, highjump, jumping)
     if hyper > 0:
         hyper -= 1
-    
     can_move2 = 1
         
 def draw():

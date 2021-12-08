@@ -1,4 +1,5 @@
 import test4
+import map2
 from pico2d import *
 import game_framework
 
@@ -43,7 +44,7 @@ def update():
     if (next_time > 1.0):
         next_time = 0
         #game_framework.quit()
-        game_framework.change_state(test4)
+        game_framework.change_state(map2)
     delay(0.01)
     next_time += 0.05
 
