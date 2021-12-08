@@ -6,6 +6,7 @@ Game_over = None
 over = None
 image = None
 wait_time =0
+die_bgm = None
 
 class game_over:
     def __init__(self):
@@ -18,9 +19,12 @@ class game_over:
 
 
 def enter():
-    global Game_over,image, wait_time
+    global Game_over,image, wait_time, die_bgm
     Game_over = game_over()
     image = load_image('gameover.png')
+    die_bgm = load_music('gameover.mp3')
+    die_bgm.set_volume(64)
+    #die_bgm.play(1)
     wait_time =0
 
 

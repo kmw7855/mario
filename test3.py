@@ -168,7 +168,7 @@ class mario:
         self.img4 = load_image('supermario3.png')
         self.superframe = 0
         self.start_time = get_time()
-        
+        self.wait_time = 0
         
         mario.font = load_font('ENCR10B.TTF', 30)
     def draw(self):
@@ -207,9 +207,14 @@ class mario:
             elif jum == 1:
                 now -= 10
                 if now < 0:
-                    jum = 0
-                    game_framework.change_state(gameover)
-                    print('die')
+                    if (self.wait_time > 3.0):
+                        self.wait_time = 0
+                        jum = 0
+                        #game_framework.quit()
+                        game_framework.change_state(gameover)
+                    delay(0.01)
+                    self.wait_time += 0.1
+                    
         else:
             if low_jump == 1:
                 self.superframe = 3
@@ -337,8 +342,15 @@ class mario:
         elif jum == 1:
             now -= 10
             if now <= ground:
-                jum = 0
-                game_framework.change_state(gameover)
+                
+                if (self.wait_time > 3.0):
+                    self.wait_time = 0
+                    jum = 0
+                    #game_framework.quit()
+                    game_framework.change_state(gameover)
+                delay(0.01)
+                self.wait_time += 0.1
+                
                 print('die')
         
             
@@ -786,12 +798,14 @@ def enter():
     global sky, Mario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change, move, moving
     global can_move2, jumping, out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12, out13, out14, out15, out16 , boxs1, pad_2, box2, boxs3, clear
     global map1_bgm, die_bgm
+    die_bgm = load_music('gameover.mp3')
+    die_bgm.set_volume(64)
+    
     map1_bgm = load_music('map1.mp3')
     map1_bgm.set_volume(32)
-    die_bgm = load_music('gameover.mp3')
-    die_bgm.set_volume(32)
-    die_bgm.play()
-    #map1_bgm.repeat_play()
+    
+    map1_bgm.repeat_play()
+    
     right = 3
     superright = 0
     state = 0
@@ -860,6 +874,7 @@ def enter():
     move = 0
     moving = 0
     can_move2 = 1
+    limit_time = 300
     print(mario_die, x, now)
 
 def exit():
@@ -877,15 +892,17 @@ def update():
     global secs, tm, sec, limit_time
     
     
-    if mario_die == 0 and limit_time <= -80:
+    if mario_die == 0 and limit_time <= 8:
         mario_die = 1
         low_jump = 1
+        die_bgm.play(1)
         Mario.die()
     
     ground = 90
-    if now == 0:
+    if mario_die == 0 and now == 0:
         mario_die = 1
         low_jump = 1
+        die_bgm.play(1)
         Mario.die()
     if collide(Mario, clear):
         state = 1
@@ -981,12 +998,7 @@ def update():
         boxs4.update(x, now)
     
 
-    secs = time.time()
-    tm = time.localtime(secs)
-    sec = tm.tm_sec
-    if sec != tm.tm_sec:
-        limit_time -= 1
-        print(limit_time)
+    
 
     for game_object in game_world.all_objects():
         game_object.update(x, now)
