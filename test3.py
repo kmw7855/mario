@@ -58,7 +58,7 @@ secs = time.time()
 tm = time.localtime(secs)
 sec = tm.tm_sec
 limit_time = 300
-
+map1_bgm = None
 
 class pad:
     image = None
@@ -167,6 +167,8 @@ class mario:
         self.img4 = load_image('supermario3.png')
         self.superframe = 0
         self.start_time = get_time()
+        self.die_bgm = load_music('gameover.mp3')
+        self.die_bgm.set_volume(32)
         mario.font = load_font('ENCR10B.TTF', 30)
     def draw(self):
         if mario_die == 1:
@@ -192,7 +194,7 @@ class mario:
         else:
             superright = 1
         if mario_die == 1:
-            
+            self.die_bgm.play(1)
             Delay = 0.05
             if low_jump == 1:
                 now += 10
@@ -320,6 +322,7 @@ class mario:
 
     def die(self):
         global low_jump, now, low_jump_y, jum
+        self.die_bgm.play(1)
         Delay = 0.05
         self.img3.draw(x, now)
         if low_jump == 1:
@@ -780,6 +783,10 @@ def enter():
     
     global sky, Mario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change, move, moving
     global can_move2, jumping, out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12, out13, out14, out15, out16 , boxs1, pad_2, box2, boxs3, clear
+    global map1_bgm
+    map1_bgm = load_music('map1.mp3')
+    map1_bgm.set_volume(32)
+    map1_bgm.repeat_play()
     right = 3
     superright = 0
     state = 0
@@ -851,7 +858,9 @@ def enter():
     print(mario_die, x, now)
 
 def exit():
+    global map1_bgm
     game_world.clear()
+    map1_bgm.stop()
     pass
 
 
