@@ -63,6 +63,7 @@ clear_state = 0
 pad_list = []
 monster_list = []
 box_list = []
+ghost_list = []
 
 class pad:
     image = None
@@ -109,6 +110,16 @@ class Sky:
 
 def collide(a, b):
     left_a, bottom_a, right_a, top_a = a.get_bb()
+    left_b, bottom_b, right_b, top_b = b.get_bb()
+    if left_a > right_b: return False
+    if right_a < left_b: return False
+    if top_a < bottom_b: return False
+    if bottom_a > top_b: return False
+    return True
+
+
+def arrow_collide(a, b):
+    left_a, bottom_a, right_a, top_a = a.arrow()
     left_b, bottom_b, right_b, top_b = b.get_bb()
     if left_a > right_b: return False
     if right_a < left_b: return False
@@ -477,11 +488,11 @@ class monster_2:
             self.right *= -1
             self.move = 0
         if self.right == 1:
-            self.x += 3
-            self.move +=3
+            self.x += 2
+            self.move +=2
         elif self.right == -1:
-            self.x -= 3
-            self.move +=3
+            self.x -= 2
+            self.move +=2
 
     def turn_move(self):
         #print('turn', self.right)
@@ -536,24 +547,23 @@ class monster_3:
         self.move = 0
         self.turn = 0
         self.die = 1
-        self.height = 50
-        self.side = 30
+        self.speed = 2
         self.right = 1
-        self.mario = 0
         self.range = range
         global jum
     def update(self):
-        if right == 3 and camera_move < moving:
-            self.x = self.x - speed
-        if self.move > self.range:
-            self.right *= -1
-            self.move = 0
-        if self.right == 1:
-            self.x += 3
-            self.move +=3
-        elif self.right == -1:
-            self.x -= 3
-            self.move +=3
+            if right == 3 and camera_move < moving:
+                self.x = self.x - speed
+            if self.move > self.range:
+                self.right *= -1
+                self.move = 0
+            if self.right == 1:
+                self.x += self.speed
+                self.move += self.speed
+            elif self.right == -1:
+                self.x -= self.speed
+                self.move += self.speed
+            self.speed = 2
 
     def draw(self, mario_x, mario_y):
         if self.die == 1:
@@ -569,7 +579,7 @@ class monster_3:
         return self.x - 20, self.y - 20, self.x + 20, self.y + 20
 
     def arrow(self):
-        return self.x - 60, self.y - 60, self.x + 60, self.y + 60
+        return self.x - 150, self.y - 150, self.x + 150, self.y + 150
 
     def mario_kill(self):
         global mario_die, state, point, stop_attack, low_jump, hyper
@@ -577,11 +587,28 @@ class monster_3:
             if state == 1:
                 state = 0
                 hyper = 50
-            else:    
+            elif mario_die == 0:    
                 mario_die = 1
                 die_bgm.play(1)  
                 low_jump = 1
 
+    def arrow_mario(self):
+        self.move = 0
+        if right == 3 and self.right == -1 and x < self.x:
+            self.speed = 0
+        elif right == 1 and self.right == 1 and x > self.x:
+            self.speed = 0
+        else:
+            if x < self.x:
+                self.right = -1
+                self.speed = 3.5
+            else:
+                self.right = 1
+                self.speed = 3.5
+            if y < self.y and self.y > ground:
+                self.y = self.y - 3.5
+            else:
+                self.y = self.y + 3.5
 
 class item_1:
     image = None
@@ -815,7 +842,7 @@ def enter():
     
     global sky, Mario, right, superright, state, before_state, can_move, running, x, frame, dir, y, ground, now, jump, jum, mario_die, point, mush_1, flower_1, star_1, turtle_1, ghost_1, pad_1, Fire, Coin, box1, attack_x, attack_y, attack, attack_state, stop_attack, low_jump, low_jump_y, high_jump, high_jump_y, hyper, Delay, change, move, moving, clear_state
     global can_move2, jumping, out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12, out13, out14, out15, out16 , boxs1, pad_2, box2, boxs3, clear
-    global map1_bgm, die_bgm, time_limit, jump_bgm, clear_bgm, Fire_bgm, monster_bgm, item_bgm, box_bgm, coin_bgm, pad_list, monster_list, box_list, ghost
+    global map1_bgm, die_bgm, time_limit, jump_bgm, clear_bgm, Fire_bgm, monster_bgm, item_bgm, box_bgm, coin_bgm, pad_list, monster_list, box_list, ghost_list, ghost
     for boxs in box_list:
         del(boxs)
     for pads in pad_list:
@@ -826,6 +853,7 @@ def enter():
     pad_list = []
     monster_list = []
     box_list = []
+    ghost_list = []
 
     jump_bgm = load_wav('jump.wav')
     jump_bgm.set_volume(16)
@@ -886,7 +914,7 @@ def enter():
         monster_list.append(monsters)
 
     ghost = monster_3(500, 200)
-
+    
     
 
     pad_1 = pad(1100,80)
@@ -959,7 +987,7 @@ def enter():
     highjump = 0
     highjump_y = 0
     jumping = 0
-    hyper = 3000
+    hyper = 0
     Delay = 0.01
     change = 0
     move = 0
@@ -998,6 +1026,10 @@ def update():
         Mario.die()
         
     if collide(Mario, ghost):
+        ghost.mario_kill()
+
+    if arrow_collide(ghost, Mario):
+        ghost.arrow_mario()
 
     ground = 90
     if mario_die == 0 and now == 0:
@@ -1064,7 +1096,7 @@ def update():
 
     for game_object in game_world.all_objects():
         game_object.update(x, now)
-
+    ghost.update()
     Mario.update()
     clear.update()
     #print(jump, jum, low_jump, highjump, jumping)
@@ -1084,6 +1116,7 @@ def draw():
         pads.draw(x, now)
     for boxs in box_list:
         boxs.draw(x, now)
+    ghost.draw(x, now)
     Mario.draw()
     #boxs1.draw(x, now)
 

@@ -476,11 +476,11 @@ class monster_2:
             self.right *= -1
             self.move = 0
         if self.right == 1:
-            self.x += 3
-            self.move +=3
+            self.x += 2
+            self.move +=2
         elif self.right == -1:
-            self.x -= 3
-            self.move +=3
+            self.x -= 2
+            self.move +=2
 
     def turn_move(self):
         #print('turn', self.right)
