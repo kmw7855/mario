@@ -16,8 +16,9 @@ def enter():
 
 
 def exit():
-    global image
+    global image, image2
     del(image)
+    del(image2)
 
 
 

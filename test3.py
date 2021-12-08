@@ -3,6 +3,7 @@ import game_framework
 #from pad import *
 import game_world
 import title
+import gameover
 import time
 speed = 20
 
@@ -178,7 +179,7 @@ class mario:
             self.img2.clip_draw(self.superframe * 75, 75 * superright, 75, 75, x, now -5)
         draw_rectangle(*self.get_bb())
         self.font.draw(1300, 1000, 'time: %3.2f' % (300 - (get_time() - self.start_time)), (0, 152, 0))
-        self.font.draw(100, 1000, 'point: %5d' % (point * 10), (0, 152, 0))
+        self.font.draw(100, 1000, 'point: %05d' % (point * 10), (0, 152, 0))
 
 
     def update(self):
@@ -205,7 +206,7 @@ class mario:
                 now -= 10
                 if now < 0:
                     jum = 0
-                    game_framework.change_state(title)
+                    game_framework.change_state(gameover)
                     print('die')
         else:
             if low_jump == 1:
@@ -333,7 +334,7 @@ class mario:
             now -= 10
             if now <= ground:
                 jum = 0
-                game_framework.change_state(title)
+                game_framework.change_state(gameover)
                 print('die')
         
             
