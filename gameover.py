@@ -1,4 +1,7 @@
 import title
+import map1
+import map3
+import map2
 from pico2d import *
 import game_framework
 
@@ -13,8 +16,10 @@ class game_over:
         self.font = load_font('mario.ttf', 150)
 
     def draw(self):
-        self.font.draw(500, 512, 'Game Over', (255, 255, 255))
-
+        if game_framework.life == 0:
+            self.font.draw(500, 512, 'Game Over', (255, 255, 255))
+        else:
+            self.font.draw(500, 512, 'life : %d' % (game_framework.life), (255, 255, 255))
 
 
 
@@ -24,6 +29,7 @@ def enter():
     image = load_image('gameover.png')
     die_bgm = load_music('gameover.mp3')
     die_bgm.set_volume(64)
+    game_framework.life -= 1
     #die_bgm.play(1)
     wait_time =0
 
@@ -36,12 +42,21 @@ def exit():
 
 
 def update():
+    
     global wait_time
     if (wait_time > 1.0):
         wait_time = 0
         #game_framework.quit()
-        game_framework.change_state(title)
-        game_framework.stage = 1
+        if game_framework.life != 0:
+            if game_framework.stage == 1:
+                game_framework.change_state(map1)
+            if game_framework.stage == 2:
+                game_framework.change_state(map2)
+            if game_framework.stage == 3:
+                game_framework.change_state(map3)
+        else:
+            game_framework.change_state(title)
+            game_framework.stage = 1
     delay(0.01)
     wait_time += 0.01
 

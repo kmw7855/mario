@@ -2,6 +2,7 @@ import time
 
 
 stage = 1
+life = 3
 
 class GameState:
     def __init__(self, state):

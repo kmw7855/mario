@@ -10,14 +10,15 @@ title_bgm = None
 
 
 
-
 def enter():
-    global image, image2, title_bgm
+    global image, image2, title_bgm 
     image = load_image('title.png')
     image2 = load_image('space.png')
     title_bgm = load_music('start.mp3')
     title_bgm.set_volume(32)
     title_bgm.repeat_play()
+    game_framework.state = 1
+    game_framework.life = 3
 
 def exit():
     global image, image2, title_bgm

@@ -6,6 +6,7 @@ import title
 import gameover
 import time
 import random
+import next_world
 speed = 5
 
 right = 3
@@ -80,7 +81,7 @@ class pad:
         global can_move 
         self.image.draw(self.x, self.y)
    
-        draw_rectangle(*self.get_bb())
+        ##draw_rectangle(*self.get_bb())
 
     def height(self):
         global ground
@@ -184,10 +185,10 @@ class mario:
             self.img4.clip_draw(frame * 75, 75 * right, 75, 75, x, now)
         elif state == 2:
             self.img2.clip_draw(self.superframe * 75, 75 * superright, 75, 75, x, now -5)
-        draw_rectangle(*self.get_bb())
+        ##draw_rectangle(*self.get_bb())
         self.font.draw(1300, 1000, 'time: %3.2f' % (time_limit - (get_time() - self.start_time)), (0, 152, 0))
         self.font.draw(100, 1000, 'point: %05d' % (point * 10), (0, 152, 0))
-
+        self.font.draw(600, 1000, 'life: %d' % (game_framework.life), (0, 152, 0))
 
     def update(self):
         global low_jump, now, low_jump_y, jum, running, frame, highjump, jump, can_move, right, state, superright, x, next, moving, camera_move, superright, Delay, jumping, now
@@ -444,7 +445,7 @@ class monster_1:
                 self.image.clip_draw(75, 0, 75, 75, self.x, self.y)
             else:
                 self.image.clip_draw(0, 0, 75, 75, self.x, self.y)
-        draw_rectangle(*self.get_bb())
+        #draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return self.x - 20, self.y - 30, self.x + 20, self.y + 20
@@ -515,7 +516,7 @@ class monster_2:
                 self.image.clip_draw(75, 0, 75, 75, self.x, self.y)
             else:
                 self.image.clip_draw(0, 0, 75, 75, self.x, self.y)
-        draw_rectangle(*self.get_bb())
+        #draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return self.x - 20, self.y - 20, self.x + 20, self.y + 20
@@ -570,8 +571,8 @@ class monster_3:
             else:
                 self.image.clip_draw(0, 0, 38, 38, self.x, self.y)
 
-        draw_rectangle(*self.get_bb())
-        draw_rectangle(*self.arrow())
+        #draw_rectangle(*self.get_bb())
+        #draw_rectangle(*self.arrow())
 
     def get_bb(self):
         return self.x - 20, self.y - 20, self.x + 20, self.y + 20
@@ -606,7 +607,7 @@ class item_1:
         if self. die == 0:
             self.image.draw(self.x, self.y)
 
-        draw_rectangle(*self.get_bb())
+        #draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return self.x - 20, self.y - 30, self.x + 20, self.y + 20    
@@ -636,7 +637,7 @@ class item_2:
         if self. die == 0:
             self.image.draw(self.x, self.y)
 
-        draw_rectangle(*self.get_bb())
+        #draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return self.x - 20, self.y - 20, self.x + 20, self.y + 20
@@ -665,7 +666,7 @@ class coin:
         if self. die == 0:
             self.image.draw(self.x, self.y)
 
-        draw_rectangle(*self.get_bb())
+        #draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return self.x - 15, self.y - 15, self.x + 15, self.y + 15
@@ -689,7 +690,7 @@ class box:
             self.image1.draw(self.x, self.y)
         elif self.status == 2:
             self.image2.draw(self.x, self.y)
-        draw_rectangle(*self.get_bb())
+        #draw_rectangle(*self.get_bb())
     def update(self,mario_x, mario_y):
         global jum, high_jump, high_jump_y, jump
         if self.x - 40 <= mario_x <= self.x + 40 and self.y <= mario_y + 50 <= self.y + 20:
@@ -734,7 +735,7 @@ class fire:
 
     def draw(self):
         self.image.draw(self.x,self.y)
-        draw_rectangle(*self.get_bb())
+        #draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return self.x - 20, self.y - 30, self.x + 20, self.y + 20
@@ -742,8 +743,8 @@ class fire:
 def clear_map():
     clear_bgm.play()
     time.sleep(2)
-    game_framework.change_state(title)
-    print('1 stage clear')
+    game_framework.change_state(next_world)
+    print('2 stage clear')
 
 
 class flag:
@@ -755,7 +756,7 @@ class flag:
 
     def draw(self):
         self.image.draw(self.x, self.y)
-        draw_rectangle(*self.get_bb())
+        #draw_rectangle(*self.get_bb())
 
     def update(self):
         if right == 3 and camera_move < moving:
@@ -794,13 +795,13 @@ def handle_events():
                     attack_state = 2
                     Fire_bgm.play()
             elif event.key == SDLK_ESCAPE:
-                game_framework.quit()
+                game_framework.change_state(title)
             elif event.key == SDLK_SPACE:
                 pass
 
         elif event.type == SDL_KEYDOWN and mario_die == 1:
             if event.key == SDLK_ESCAPE:
-                game_framework.quit()
+                game_framework.change_state(title)
                 print(point)        
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
@@ -965,8 +966,8 @@ def enter():
     move = 0
     moving = 0
     can_move2 = 1
-    limit_time = 250
-    time_limit = 250
+    limit_time = 200
+    time_limit = 200
     clear_state = 0
     print(mario_die, x, now)
 
@@ -1006,6 +1007,7 @@ def update():
         Mario.die()
     if collide(Mario, clear):
         if clear_state == 0:
+            game_framework.stage = 3
             clear_map()
             clear_state = 1
     

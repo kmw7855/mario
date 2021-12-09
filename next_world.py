@@ -1,5 +1,7 @@
-import test4
+import map1
+import map3
 import map2
+import title
 from pico2d import *
 import game_framework
 
@@ -19,6 +21,8 @@ class game_over:
             self.font.draw(700, 512, '1 - 2', (255, 255, 255))
         if game_framework.stage == 3:
             self.font.draw(700, 512, '1 - 3', (255, 255, 255))
+        if game_framework.stage == 3:
+            self.font.draw(500, 512, 'Game Clear', (255, 255, 255))
 
 
 
@@ -44,7 +48,14 @@ def update():
     if (next_time > 1.0):
         next_time = 0
         #game_framework.quit()
-        game_framework.change_state(map2)
+        if game_framework.stage == 1:
+            game_framework.change_state(map1)
+        if game_framework.stage == 2:
+            game_framework.change_state(map2)
+        if game_framework.stage == 3:
+            game_framework.change_state(map3)
+        if game_framework.stage == 4:
+            game_framework.change_state(title)
     delay(0.01)
     next_time += 0.05
 
