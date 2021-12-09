@@ -189,7 +189,7 @@ class mario:
         ##draw_rectangle(*self.get_bb())
         self.font.draw(1300, 1000, 'time: %3.2f' % (time_limit - (get_time() - self.start_time)), (0, 152, 0))
         self.font.draw(100, 1000, 'point: %05d' % (point * 10), (0, 152, 0))
-        self.font.draw(600, 1000, 'life: %d' % (game_framework.life), (0, 152, 0))
+        self.font.draw(600, 1000, 'life: %d   stage: 1-1' % (game_framework.life), (0, 152, 0))
 
     def update(self):
         global low_jump, now, low_jump_y, jum, running, frame, highjump, jump, can_move, right, state, superright, x, next, moving, camera_move, superright, Delay, jumping, now
